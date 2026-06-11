@@ -16,6 +16,13 @@ interface AppContextProps {
   updateTrciRow: (accountCode: string, fields: Partial<TrciRow>) => void;
   addCustomTrciRow: (code: string, name: string) => void;
   resetToDefault: () => void;
+  showConfirm: (message: string, onConfirm: () => void) => void;
+  closeConfirm: () => void;
+  confirmDialog: {
+    isOpen: boolean;
+    message: string;
+    onConfirm: () => void;
+  } | null;
   calculatedValues: {
     trciTotals: {
       initialSums: Record<string, number>;
@@ -34,6 +41,7 @@ interface AppContextProps {
     netResults: Record<string, {
       costOfSales: number;
       distributionCost: number;
+      directDistributionCost: number;
       totalCostPrice: number;
       revenue: number;
       analyticMarge: number;
@@ -170,6 +178,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return DEFAULT_STATE;
   });
 
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
+
+  const showConfirm = (message: string, onConfirm: () => void) => {
+    setConfirmDialog({
+      isOpen: true,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        setConfirmDialog(null);
+      }
+    });
+  };
+
+  const closeConfirm = () => {
+    setConfirmDialog(null);
+  };
+
   useEffect(() => {
     localStorage.setItem('anacompta_erp_state', JSON.stringify(state));
   }, [state]);
@@ -197,16 +226,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteRawMaterial = (id: string) => {
-    updateState(prev => ({
-      ...prev,
-      rawMaterials: prev.rawMaterials.filter(m => m.id !== id),
-      // Clean up consumed references in products
-      products: prev.products.map(p => {
-        const consumed = { ...p.consumedMaterials };
-        delete consumed[id];
-        return { ...p, consumedMaterials: consumed };
-      })
-    }));
+    updateState(prev => {
+      return {
+        ...prev,
+        rawMaterials: prev.rawMaterials.filter(m => m.id !== id),
+        // Clean up consumed references and active states in products
+        products: prev.products.map(p => {
+          const consumed = { ...p.consumedMaterials };
+          delete consumed[id];
+
+          const activeMat = p.activeMaterials ? { ...p.activeMaterials } : undefined;
+          if (activeMat) {
+            delete activeMat[id];
+          }
+
+          return { 
+            ...p, 
+            consumedMaterials: consumed,
+            activeMaterials: activeMat
+          };
+        })
+      };
+    });
   };
 
   const addProduct = (product: Omit<Product, 'id'>) => {
@@ -477,6 +518,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const netResults: Record<string, {
       costOfSales: number;
       distributionCost: number;
+      directDistributionCost: number;
       totalCostPrice: number;
       revenue: number;
       analyticMarge: number;
@@ -495,13 +537,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         ? p.overrideCostOfSales 
         : p.quantitySold * prodCmupOnSale;
       
+      const directDistP = p.directDistP || 0;
+      const directDistributionCost = p.overrideDirectDistAmt !== undefined
+        ? p.overrideDirectDistAmt
+        : p.quantitySold * directDistP;
+
       const distributionCost = p.overrideDistributionCost !== undefined 
         ? p.overrideDistributionCost 
         : p.quantitySold * commUnitCost;
       
       const totalCP = p.overrideTotalCostPrice !== undefined 
         ? p.overrideTotalCostPrice 
-        : costOfSales + distributionCost;
+        : costOfSales + directDistributionCost + distributionCost;
 
       const revenue = p.overrideRevenue !== undefined 
         ? p.overrideRevenue 
@@ -514,6 +561,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       netResults[p.id] = {
         costOfSales,
         distributionCost,
+        directDistributionCost,
         totalCostPrice: totalCP,
         revenue,
         analyticMarge
@@ -563,6 +611,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateTrciRow,
       addCustomTrciRow,
       resetToDefault,
+      showConfirm,
+      closeConfirm,
+      confirmDialog,
       calculatedValues
     }}>
       {children}

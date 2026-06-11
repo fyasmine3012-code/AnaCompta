@@ -10,6 +10,7 @@ export const PurchasesPage: React.FC = () => {
     addRawMaterial, 
     updateRawMaterial, 
     deleteRawMaterial, 
+    showConfirm,
     calculatedValues 
   } = useApp();
 
@@ -71,9 +72,11 @@ export const PurchasesPage: React.FC = () => {
             <Plus className="text-amber-400 w-4 h-4" />
             <span>{t.addMaterialTitle}</span>
           </h3>
-          <p className="text-[10px] text-slate-500 mt-1">
-            {state.language === 'ar' ? 'تضاف كعمود مستقل متبوعة ببطاقة جرد المخزون الخاص بها تلقائياً.' : 'Created alongside stock ledger tracking blocks.'}
-          </p>
+          {state.language !== 'ar' && (
+            <p className="text-[10px] text-slate-500 mt-1">
+              {'Created alongside stock ledger tracking blocks.'}
+            </p>
+          )}
         </div>
         <form onSubmit={onAddMaterial} className="flex gap-2 md:col-span-3 w-full">
           <input 
@@ -127,6 +130,7 @@ export const PurchasesPage: React.FC = () => {
             const combQ = rm.initQ + rm.purchaseQ;
             const combV = rm.initV + grandTotalAmt;
             const cmupVal = calculatedValues.rawMaterialCumps[rm.id] || 0;
+            const isCustomType = !['مصاريف شحن ونقل', 'حقوق الجمركة', 'تأمين السلع'].includes(rm.directExpenseType);
 
             return (
               <motion.div 
@@ -148,7 +152,10 @@ export const PurchasesPage: React.FC = () => {
                   </div>
                   <button 
                     onClick={() => {
-                      if (confirm(t.confirmDelete)) deleteRawMaterial(rm.id);
+                      showConfirm(
+                        state.language === 'ar' ? "هل أنت متأكد من حذف هذا العنصر؟" : t.confirmDelete,
+                        () => deleteRawMaterial(rm.id)
+                      );
                     }}
                     className="text-rose-400 hover:text-rose-500 p-1.5 bg-slate-900 border border-slate-800 rounded-lg hover:bg-slate-950 transition-all flex items-center gap-1.5 text-xs"
                   >
@@ -224,15 +231,32 @@ export const PurchasesPage: React.FC = () => {
                           <tr className="hover:bg-slate-900/10">
                             <td className="text-right p-3 font-semibold flex flex-col gap-1 inline-block">
                               <select 
-                                value={rm.directExpenseType}
-                                onChange={e => updateRawMaterial(rm.id, { directExpenseType: e.target.value })}
+                                value={isCustomType ? "أخرى" : rm.directExpenseType}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  if (val === "أخرى") {
+                                    updateRawMaterial(rm.id, { directExpenseType: state.language === 'ar' ? "أقساط ورسوم أخرى" : "Autre frais" });
+                                  } else {
+                                    updateRawMaterial(rm.id, { directExpenseType: val });
+                                  }
+                                }}
                                 className="bg-slate-950 border border-slate-800 text-[10px] text-slate-300 rounded p-1 focus:outline-none w-full"
                               >
                                 <option value="مصاريف شحن ونقل">مصاريف شحن ونقل (Transportation)</option>
                                 <option value="حقوق الجمركة">حقوق الجمركة (Customs Duties)</option>
                                 <option value="تأمين السلع">تأمين السلع (Insurance)</option>
-                                <option value="أخرى">أخرى (Others)</option>
+                                <option value="أخرى">{state.language === 'ar' ? 'أخرى (اكتب يدوياً)' : 'Autre (manuel)'}</option>
                               </select>
+
+                              {isCustomType && (
+                                <input 
+                                  type="text"
+                                  value={rm.directExpenseType}
+                                  onChange={e => updateRawMaterial(rm.id, { directExpenseType: e.target.value })}
+                                  placeholder={state.language === 'ar' ? 'اكتب نوع العبء مخصص...' : 'Décrire les frais directs...'}
+                                  className="mt-1 bg-slate-950 border border-slate-800 text-[10px] text-white rounded p-1 px-1.5 focus:outline-none w-full"
+                                />
+                              )}
                               
                               {/* Toggle Amount vs Percentage */}
                               <div className="flex items-center gap-2 mt-1">

@@ -10,6 +10,7 @@ export const ProductionPage: React.FC = () => {
     addProduct, 
     updateProduct, 
     deleteProduct, 
+    showConfirm,
     calculatedValues 
   } = useApp();
 
@@ -170,7 +171,10 @@ export const ProductionPage: React.FC = () => {
                   </h2>
                   <button 
                     onClick={() => {
-                      if (confirm(t.confirmDelete)) deleteProduct(p.id);
+                      showConfirm(
+                        state.language === 'ar' ? "هل أنت متأكد من حذف هذا العنصر؟" : t.confirmDelete,
+                        () => deleteProduct(p.id)
+                      );
                     }}
                     className="text-rose-400 hover:text-rose-500 hover:scale-105 transition-all bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 font-bold"
                   >

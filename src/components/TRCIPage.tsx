@@ -14,6 +14,7 @@ export const TRCIPage: React.FC = () => {
     deleteWorkshop, 
     updateTrciRow, 
     addCustomTrciRow, 
+    showConfirm,
     calculatedValues 
   } = useApp();
 
@@ -28,6 +29,8 @@ export const TRCIPage: React.FC = () => {
 
   const [newWsName, setNewWsName] = useState('');
   const [newWsType, setNewWsType] = useState<'aux' | 'main'>('main');
+
+  const [focusedCell, setFocusedCell] = useState<{ rowCode: string; wsId: string; type: 'pct' | 'amount'; value: string } | null>(null);
 
   const onAddCustomAccount = (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,9 +184,11 @@ export const TRCIPage: React.FC = () => {
                   <Plus className="text-emerald-400 w-4 h-4" />
                   <span>{state.language === 'ar' ? 'إدراج قسم أو ورشة عمل هيكلية' : 'Insert Department / Workshop'}</span>
                 </h3>
-                <p className="text-[10px] text-slate-400 mt-1">
-                  {state.language === 'ar' ? 'تضاف كقسم فرعي داعم قبل القسم التجاري الختامي' : 'Added to allocation centers prior to Sales center'}
-                </p>
+                {state.language !== 'ar' && (
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    {'Added to allocation centers prior to Sales center'}
+                  </p>
+                )}
               </div>
 
               <form onSubmit={onAddWorkshop} className="flex flex-wrap gap-2 flex-1 max-w-2xl justify-end">
@@ -238,7 +243,12 @@ export const TRCIPage: React.FC = () => {
                         {/* Protect core defaults from deletion */}
                         {ws.id !== 'adm' && ws.id !== 'maint' && ws.id !== 'appro' && ws.id !== 'comm' && (
                           <button 
-                            onClick={() => deleteWorkshop(ws.id)} 
+                            onClick={() => {
+                              showConfirm(
+                                state.language === 'ar' ? "هل أنت متأكد من حذف هذا العنصر؟" : t.confirmDelete,
+                                () => deleteWorkshop(ws.id)
+                              );
+                            }} 
                             className="text-rose-400 hover:text-rose-500 hover:scale-105 transition-all p-0.5 rounded"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -298,6 +308,12 @@ export const TRCIPage: React.FC = () => {
                         const pctValue = row.pcts[ws.id] || 0;
                         const allocatedDA = row.totalAmount * (pctValue / 100);
 
+                        const isPctFocused = focusedCell && focusedCell.rowCode === row.accountCode && focusedCell.wsId === ws.id && focusedCell.type === 'pct';
+                        const isAmtFocused = focusedCell && focusedCell.rowCode === row.accountCode && focusedCell.wsId === ws.id && focusedCell.type === 'amount';
+
+                        const displayedPct = isPctFocused ? focusedCell.value : (pctValue === 0 ? "0" : pctValue.toFixed(2));
+                        const displayedDA = isAmtFocused ? focusedCell.value : Math.round(allocatedDA).toString();
+
                         return (
                           <React.Fragment key={ws.id}>
                             {/* % input */}
@@ -306,26 +322,15 @@ export const TRCIPage: React.FC = () => {
                                 type="number" 
                                 min="0" 
                                 max="100"
-                                value={pctValue}
+                                step="0.01"
+                                value={displayedPct}
+                                onFocus={() => setFocusedCell({ rowCode: row.accountCode, wsId: ws.id, type: 'pct', value: pctValue === 0 ? "" : pctValue.toString() })}
+                                onBlur={() => setFocusedCell(null)}
                                 onChange={e => {
-                                  const updatedPcts = { ...row.pcts };
-                                  const inputted = parseFloat(e.target.value) || 0;
-                                  updatedPcts[ws.id] = inputted;
-
-                                  // Smart Balance logic: auto-fills remaining fields if total percent is close
-                                  const othersSum = state.workshops
-                                    .filter(other => other.id !== ws.id)
-                                    .reduce((sum, other) => sum + (updatedPcts[other.id] || 0), 0);
-                                  
-                                  const remainder = 100 - (othersSum + inputted);
-                                  // If only one cell is remaining and it's zero or empty, let's auto-fill it to complete 100%
-                                  if (remainder > 0 && inputtingIsRemaining(ws.id, updatedPcts, state.workshops)) {
-                                    const lastWs = state.workshops.find(other => other.id !== ws.id && (updatedPcts[other.id] === 0 || !updatedPcts[other.id]));
-                                    if (lastWs) {
-                                      updatedPcts[lastWs.id] = remainder;
-                                    }
-                                  }
-
+                                  const valStr = e.target.value;
+                                  setFocusedCell(prev => prev ? { ...prev, value: valStr } : null);
+                                  const inputted = parseFloat(valStr) || 0;
+                                  const updatedPcts = { ...row.pcts, [ws.id]: inputted };
                                   updateTrciRow(row.accountCode, { pcts: updatedPcts });
                                 }}
                                 className="w-full text-center bg-slate-950 border border-slate-800 rounded p-0.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
@@ -335,12 +340,16 @@ export const TRCIPage: React.FC = () => {
                             <td className="p-1 border-r border-slate-800/40 min-w-[75px]">
                               <input 
                                 type="number"
-                                value={Math.round(allocatedDA)}
+                                value={displayedDA}
+                                onFocus={() => setFocusedCell({ rowCode: row.accountCode, wsId: ws.id, type: 'amount', value: allocatedDA === 0 ? "" : Math.round(allocatedDA).toString() })}
+                                onBlur={() => setFocusedCell(null)}
                                 onChange={e => {
-                                  const val = parseFloat(e.target.value) || 0;
+                                  const valStr = e.target.value;
+                                  setFocusedCell(prev => prev ? { ...prev, value: valStr } : null);
+                                  const val = parseFloat(valStr) || 0;
                                   const total = row.totalAmount || 1;
-                                  const updatedPcts = { ...row.pcts };
-                                  updatedPcts[ws.id] = (val / total) * 100;
+                                  const rawPct = (val / total) * 100;
+                                  const updatedPcts = { ...row.pcts, [ws.id]: rawPct };
                                   updateTrciRow(row.accountCode, { pcts: updatedPcts });
                                 }}
                                 className="w-full text-center bg-slate-950 border border-slate-800/60 rounded p-0.5 text-xs text-indigo-300 font-bold focus:outline-none focus:border-indigo-500"
@@ -351,12 +360,23 @@ export const TRCIPage: React.FC = () => {
                       })}
 
                       {/* Control Column */}
-                      <td className="p-2 border-r border-slate-800">
-                        <span className={`inline-flex items-center justify-center font-bold px-2 py-0.5 rounded text-[10px] w-full ${
-                          isBalanced ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/30' : 'bg-rose-950 text-rose-400 border border-rose-500/30'
-                        }`}>
-                          {row_sum}%
-                        </span>
+                      <td className="p-2 border-r border-slate-800 min-w-[130px]">
+                        <div className="flex flex-col items-center gap-1">
+                          <span className={`inline-flex items-center justify-center font-bold px-2 py-1 rounded text-[10px] w-full ${
+                            isBalanced 
+                              ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/30' 
+                              : 'bg-rose-950 text-rose-400 border border-rose-500/30'
+                          }`}>
+                            {row_sum.toFixed(2)}%
+                          </span>
+                          <span className={`text-[9px] font-medium leading-tight text-center block ${
+                            isBalanced ? 'text-emerald-400' : 'text-rose-400'
+                          }`}>
+                            {isBalanced 
+                              ? (state.language === 'ar' ? 'التوزيع صحيح' : 'Correct Allocation') 
+                              : (state.language === 'ar' ? 'مجموع نسب التوزيع يجب أن يساوي 100%' : 'Allocation sum must equal 100%')}
+                          </span>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -490,7 +510,7 @@ export const TRCIPage: React.FC = () => {
                               />
                               {(isDynamic || ws.overrideNombreUO !== undefined) && (
                                 <div className="text-[9px] text-slate-500 mt-0.5 flex flex-col items-center justify-center gap-0.5">
-                                  {ws.overrideNombreUO !== undefined ? (
+                                  {ws.overrideNombreUO !== undefined && (
                                     <button 
                                       type="button"
                                       onClick={() => updateWorkshop(ws.id, { overrideNombreUO: undefined })}
@@ -499,10 +519,6 @@ export const TRCIPage: React.FC = () => {
                                     >
                                       {state.language === 'ar' ? 'يدوي (اضغط للتلقائي)' : 'Manual (click for auto)'}
                                     </button>
-                                  ) : (
-                                    <span className="text-teal-400 font-bold text-[8px]">
-                                      {state.language === 'ar' ? 'تلقائي / آلي' : 'System Synced'}
-                                    </span>
                                   )}
                                 </div>
                               )}
@@ -543,9 +559,3 @@ export const TRCIPage: React.FC = () => {
     </div>
   );
 };
-
-// Helper to check if we are down to final blank percent cell to ease computation
-function inputtingIsRemaining(activeId: string, updatedPcts: Record<string, number>, workshops: Workshop[]) {
-  const unsetWorkshops = workshops.filter(ws => ws.id !== activeId && (!updatedPcts[ws.id] || updatedPcts[ws.id] === 0));
-  return unsetWorkshops.length === 1;
-}

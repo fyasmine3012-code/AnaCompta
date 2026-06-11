@@ -32,6 +32,9 @@ export interface Product {
   overrideTotalCostPrice?: number;
   overrideRevenue?: number;
   overrideAnalyticMarge?: number;
+  directDistType?: string;
+  directDistP?: number;
+  overrideDirectDistAmt?: number;
   standardUnitCost?: number; // Target Budgeted Cost for Variance Analysis
   wastePercentage?: number; // Waste/Loss Percentage per Product
 }

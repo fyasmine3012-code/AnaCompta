@@ -5,6 +5,87 @@
   body {
     background-color: #030712;
     color: #f8fafc;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  html.light body {
+    background-color: #f1f5f9;
+    color: #0f172a;
+  }
+
+  /* Light theme color and background overrides for elements for an elegant Oracle/Odoo look */
+  html.light .bg-slate-950 {
+    background-color: #ffffff !important;
+  }
+  html.light .bg-slate-900 {
+    background-color: #f8fafc !important;
+  }
+  html.light .bg-[#090d16] {
+    background-color: #ffffff !important;
+  }
+  html.light .bg-[#090d16]\/80 {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+  }
+  html.light .bg-slate-950\/30 {
+    background-color: rgba(248, 250, 252, 0.5) !important;
+  }
+  html.light .border-slate-900\/80,
+  html.light .border-slate-800,
+  html.light .border-slate-900,
+  html.light .border-indigo-950\/40,
+  html.light .border-[#151c2c]\/80 {
+    border-color: #e2e8f0 !important;
+  }
+  html.light .text-slate-100 {
+    color: #0f172a !important;
+  }
+  html.light .text-slate-200 {
+    color: #1e293b !important;
+  }
+  html.light .text-slate-300 {
+    color: #334155 !important;
+  }
+  html.light .text-slate-400 {
+    color: #475569 !important;
+  }
+  html.light .text-slate-500 {
+    color: #64748b !important;
+  }
+  html.light .text-white {
+    color: #0f172a !important;
+  }
+  html.light .text-transparent.bg-clip-text.bg-gradient-to-r {
+    background: none !important;
+    background-clip: unset !important;
+    -webkit-background-clip: unset !important;
+    color: #1e3a8a !important;
+  }
+  html.light input,
+  html.light select,
+  html.light textarea {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+  }
+  html.light tr {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #e2e8f0 !important;
+  }
+  html.light tr:hover {
+    background-color: #f8fafc !important;
+  }
+  html.light tbody {
+    background-color: #ffffff !important;
+  }
+  html.light th {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+    border-color: #e2e8f0 !important;
+  }
+  html.light aside {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
   }
 }
 
@@ -12,6 +93,12 @@
   background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+html.light .glass-panel {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
 }
 
 /* Custom scrollbars for pristine tables views */
@@ -22,10 +109,19 @@
 ::-webkit-scrollbar-track {
   background: #030712;
 }
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
 ::-webkit-scrollbar-thumb {
   background: #1e293b;
   border-radius: 99px;
 }
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
 ::-webkit-scrollbar-thumb:hover {
   background: #334155;
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

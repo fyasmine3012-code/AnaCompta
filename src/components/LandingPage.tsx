@@ -88,8 +88,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
   // Translations dictionary for Landing Page elements
   const ls: Record<string, any> = {
     ar: {
-      tagline: "حوّل بياناتك المحاسبية إلى ذكاء إداري حقيقي",
-      subTagline: "نظام ERP رقم واحد في الجزائر لتبسيط التكلفة المعيارية، إهلاك أعباء TRCI، تحليل الهدر وتقييم ربحية خطوط الإنتاج والورشات في الوقت الفعلي.",
+      tagline: "منصة سحابية مدعمة بالذكاء الاصطناعي لإدارة محاسبة التكاليف وتحليل الأداء المالي ودعم اتخاذ القرار داخل المؤسسات الصناعية",
+      subTagline: "نظام رقمي وطني مبسط لحساب التكلفة المعيارية، إهلاك أعباء TRCI، تحليل هدر المواد، وتقييم مؤشرات الربحية خطوة بخطوة بدلالة نظام SCF الجزائري.",
       ctaDemo: "طلب عرض توضيحي",
       ctaTrial: "جرب مجاناً - 14 يوم مجانية",
       ctaLearn: "اكتشف المزيد",
@@ -482,30 +482,30 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
               <div className="grid grid-cols-3 gap-3.5 mt-5">
                 <div className="bg-slate-950 border border-slate-900 rounded-2xl p-4 text-center">
                   <span className="text-[9.5px] uppercase text-slate-500 tracking-wider block font-bold">
-                    {state.language === 'ar' ? 'هامش الربح الإجمالي' : 'Marge bénéficiaire'}
+                    {state.language === 'ar' ? 'هامش الربح الافتراضي' : 'Marge de démonstration'}
                   </span>
                   <div className="text-sm md:text-lg font-black text-emerald-400 font-mono mt-1 flex items-center justify-center gap-1">
                     <TrendingUp className="w-3.5 h-3.5" />
-                    <span>+{Math.round(calculatedValues.corporateSummary.netCorporateProfit > 0 ? (calculatedValues.corporateSummary.netCorporateProfit / (calculatedValues.corporateSummary.totalSales || 1)) * 100 : 18.5)}%</span>
+                    <span>+24.5%</span>
                   </div>
                 </div>
 
                 <div className="bg-slate-950 border border-slate-900 rounded-2xl p-4 text-center">
                   <span className="text-[9.5px] uppercase text-slate-500 tracking-wider block font-bold">
-                    {state.language === 'ar' ? 'رقم الأعمال الإجمالي' : "Chiffre d'affaires"}
+                    {state.language === 'ar' ? 'رقم أعمال توضيحي' : "Chiffre d'affaires démo"}
                   </span>
                   <div className="text-sm md:text-lg font-black text-white font-mono mt-1">
-                    {Math.round(calculatedValues.corporateSummary.totalSales || 1450000).toLocaleString()} <span className="text-[9px] text-slate-500">DA</span>
+                    12,850,000 <span className="text-[9px] text-slate-500">DA</span>
                   </div>
                 </div>
 
                 <div className="bg-slate-950 border border-slate-900 rounded-2xl p-4 text-center">
                   <span className="text-[9.5px] uppercase text-slate-500 tracking-wider block font-bold">
-                    {state.language === 'ar' ? 'معدل الهدر والتشغيل' : 'Taux de gaspillage'}
+                    {state.language === 'ar' ? 'معدل هدر نموذجي' : 'Taux de gaspillage type'}
                   </span>
                   <div className="text-sm md:text-lg font-black text-amber-500 font-mono mt-1 flex items-center justify-center gap-1">
                     <Activity className="w-3.5 h-3.5" />
-                    <span>4.8%</span>
+                    <span>3.2%</span>
                   </div>
                 </div>
               </div>

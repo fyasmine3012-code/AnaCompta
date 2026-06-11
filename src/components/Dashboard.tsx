@@ -482,8 +482,16 @@ export const Dashboard: React.FC = () => {
                        <tr key={p.id} className="hover:bg-slate-900/10">
                          <td className="text-right p-3 font-semibold text-slate-300 font-sans">{p.name}</td>
                          <td className="p-2 text-slate-300 font-bold">{unitCost.toFixed(2)}</td>
-                         <td className="p-2 font-bold text-amber-500">
-                           {hasTarget ? `${target.toLocaleString()} DA` : "-"}
+                         <td className="p-2 font-semibold">
+                           <div className="flex items-center justify-center gap-1">
+                             <input 
+                               type="number"
+                               placeholder="..."
+                               value={p.standardUnitCost || ""}
+                               onChange={e => updateProduct(p.id, { standardUnitCost: parseFloat(e.target.value) || undefined })}
+                               className="w-16 bg-slate-950 border border-slate-800 rounded p-0.5 text-center font-bold text-amber-400 font-mono text-[11px] focus:outline-none focus:border-amber-500"
+                             />
+                           </div>
                          </td>
                          <td className={`p-2 font-black ${hasTarget ? (variance > 0 ? 'text-rose-400' : 'text-emerald-400') : 'text-slate-500'}`}>
                            {hasTarget ? `${variance > 0 ? '+' : ''}${Math.round(variance).toLocaleString()}` : "-"}

@@ -64,6 +64,7 @@ export const CostPricePage: React.FC = () => {
             const hasOverrides = 
               p.overrideCostOfSales !== undefined || 
               p.overrideDistributionCost !== undefined || 
+              p.overrideDirectDistAmt !== undefined ||
               p.overrideTotalCostPrice !== undefined || 
               p.overrideRevenue !== undefined || 
               p.overrideAnalyticMarge !== undefined;
@@ -104,6 +105,7 @@ export const CostPricePage: React.FC = () => {
                           onClick={() => updateProduct(p.id, {
                             overrideCostOfSales: undefined,
                             overrideDistributionCost: undefined,
+                            overrideDirectDistAmt: undefined,
                             overrideTotalCostPrice: undefined,
                             overrideRevenue: undefined,
                             overrideAnalyticMarge: undefined
@@ -156,9 +158,72 @@ export const CostPricePage: React.FC = () => {
                           </td>
                         </tr>
 
+                        {/* Direct distribution loads */}
+                        <tr className="hover:bg-slate-900/10 border-b border-slate-800/30">
+                          <td className="text-right p-3 text-slate-300">
+                            <div className="flex flex-col gap-1 align-right">
+                              <span className="font-bold">{state.language === 'ar' ? 'الأعباء المباشرة' : 'Direct Expenses'}</span>
+                              <div className="flex gap-1.5 items-center mt-1">
+                                <select
+                                  value={['النقل', 'التغليف', 'التأمين', 'العمولات', 'الشحن', 'المناولة'].includes(p.directDistType || '') ? p.directDistType : (p.directDistType ? 'أخرى' : 'النقل')}
+                                  onChange={e => {
+                                    const val = e.target.value;
+                                    if (val === 'أخرى') {
+                                      updateProduct(p.id, { directDistType: 'أخرى: ' });
+                                    } else {
+                                      updateProduct(p.id, { directDistType: val });
+                                    }
+                                  }}
+                                  className="bg-slate-950 border border-slate-800 rounded p-1 text-slate-300 text-[10px] focus:outline-none"
+                                >
+                                  <option value="النقل">{state.language === 'ar' ? 'النقل' : 'Transport'}</option>
+                                  <option value="التغليف">{state.language === 'ar' ? 'التغليف' : 'Packaging'}</option>
+                                  <option value="التأمين">{state.language === 'ar' ? 'التأمين' : 'Insurance'}</option>
+                                  <option value="العمولات">{state.language === 'ar' ? 'العمولات' : 'Commissions'}</option>
+                                  <option value="الشحن">{state.language === 'ar' ? 'الشحن' : 'Shipping'}</option>
+                                  <option value="المناولة">{state.language === 'ar' ? 'المناولة' : 'Handling'}</option>
+                                  <option value="أخرى">{state.language === 'ar' ? 'أخرى' : 'Other'}</option>
+                                </select>
+                                
+                                {p.directDistType && (p.directDistType.startsWith('أخرى: ') || !['النقل', 'التغليف', 'التأمين', 'العمولات', 'الشحن', 'المناولة'].includes(p.directDistType)) && (
+                                  <input
+                                    type="text"
+                                    value={p.directDistType.startsWith('أخرى: ') ? p.directDistType.replace('أخرى: ', '') : p.directDistType}
+                                    onChange={e => {
+                                      updateProduct(p.id, { directDistType: 'أخرى: ' + e.target.value });
+                                    }}
+                                    placeholder={state.language === 'ar' ? 'اسم العبء...' : 'Name...'}
+                                    className="bg-slate-950 border border-slate-800 rounded p-1 text-slate-100 text-[10px] w-24 focus:outline-none focus:border-indigo-500"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-2 text-slate-400">{p.quantitySold.toLocaleString()}</td>
+                          <td className="p-1">
+                            <input 
+                              type="number"
+                              value={p.directDistP || 0}
+                              onChange={e => updateProduct(p.id, { directDistP: parseFloat(e.target.value) || 0 })}
+                              className="w-full text-center bg-slate-950 border border-slate-800 rounded p-1 text-slate-100 font-bold focus:outline-none text-[11px]"
+                            />
+                          </td>
+                          <td className="p-1">
+                            <input 
+                              type="number"
+                              value={p.overrideDirectDistAmt !== undefined ? p.overrideDirectDistAmt : Math.round(results.directDistributionCost || 0)}
+                              onChange={e => updateProduct(p.id, { overrideDirectDistAmt: parseFloat(e.target.value) || 0 })}
+                              className={`w-full text-center bg-slate-950 border rounded p-1 text-slate-100 font-bold focus:outline-none ${p.overrideDirectDistAmt !== undefined ? 'border-amber-500/80 text-amber-400' : 'border-slate-800'}`}
+                            />
+                          </td>
+                        </tr>
+
                         {/* Indirect commercial loads */}
                         <tr className="hover:bg-slate-900/10 border-b border-slate-800/30">
-                          <td className="text-right p-3 text-slate-300">{t.distributionCommercialExpenses}</td>
+                          <td className="text-right p-3 text-slate-300">
+                            <span className="font-bold">{state.language === 'ar' ? 'الأعباء غير المباشرة' : 'Indirect Expenses'}</span>
+                            <span className="text-[10px] text-slate-500 block">({state.language === 'ar' ? 'القسم التجاري' : 'Commercial Dept.'})</span>
+                          </td>
                           <td className="p-2 text-slate-400">{p.quantitySold.toLocaleString()}</td>
                           <td className="p-2 text-emerald-400 font-bold">{commUnitCost.toFixed(2)}</td>
                           <td className="p-1">

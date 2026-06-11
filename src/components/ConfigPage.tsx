@@ -13,7 +13,8 @@ export const ConfigPage: React.FC = () => {
     deleteProduct, 
     addWorkshop, 
     deleteWorkshop, 
-    resetToDefault 
+    resetToDefault,
+    showConfirm
   } = useApp();
 
   const t = locales[state.language];
@@ -182,7 +183,7 @@ export const ConfigPage: React.FC = () => {
                   <div className="text-[10px] text-slate-500">{rm.initQ} {rm.unit} @ {rm.initV} DA</div>
                 </div>
                 <button 
-                  onClick={() => { if (confirm(t.confirmDelete)) deleteRawMaterial(rm.id); }}
+                  onClick={() => { showConfirm(state.language === 'ar' ? "هل أنت متأكد من حذف هذا العنصر؟" : t.confirmDelete, () => deleteRawMaterial(rm.id)); }}
                   className="text-rose-400 hover:text-rose-500 p-1"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -243,7 +244,7 @@ export const ConfigPage: React.FC = () => {
                   <div className="text-[10px] text-slate-500">{p.initQ} {p.unit} @ {p.initV} DA</div>
                 </div>
                 <button 
-                  onClick={() => { if (confirm(t.confirmDelete)) deleteProduct(p.id); }}
+                  onClick={() => { showConfirm(state.language === 'ar' ? "هل أنت متأكد من حذف هذا العنصر؟" : t.confirmDelete, () => deleteProduct(p.id)); }}
                   className="text-rose-400 hover:text-rose-500 p-1"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -297,7 +298,7 @@ export const ConfigPage: React.FC = () => {
                 {/* Prevent deleting core centers */}
                 {w.id !== 'adm' && w.id !== 'maint' && w.id !== 'appro' && w.id !== 'comm' ? (
                   <button 
-                    onClick={() => { if (confirm(t.confirmDelete)) deleteWorkshop(w.id); }}
+                    onClick={() => { showConfirm(state.language === 'ar' ? "هل أنت متأكد من حذف هذا العنصر؟" : t.confirmDelete, () => deleteWorkshop(w.id)); }}
                     className="text-rose-400 hover:text-rose-500 p-1"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

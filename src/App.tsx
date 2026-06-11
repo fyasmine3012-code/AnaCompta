@@ -24,15 +24,21 @@ import {
   X,
   ChevronsRight,
   LogOut,
-  Home
+  Home,
+  Sun,
+  Moon,
+  AlertCircle
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 function AppContent() {
-  const { state, updateState } = useApp();
+  const { state, updateState, confirmDialog, closeConfirm } = useApp();
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'landing' | 'app'>('landing');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('anacompta_theme') as 'light' | 'dark') || 'dark';
+  });
 
   const t = locales[state.language];
   const isRtl = state.language === 'ar';
@@ -43,6 +49,15 @@ function AppContent() {
     document.documentElement.lang = state.language;
     document.body.style.fontFamily = isRtl ? "'Cairo', sans-serif" : "'Inter', sans-serif";
   }, [state.language, isRtl]);
+
+  useEffect(() => {
+    localStorage.setItem('anacompta_theme', theme);
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  }, [theme]);
 
   const tabsConfig = [
     { id: 'dashboard', label: t.dashboard, icon: PieChart },
@@ -74,7 +89,7 @@ function AppContent() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col bg-[#030712] text-slate-100 font-sans antialiased overflow-x-hidden ${
+    <div className={`min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans antialiased overflow-x-hidden ${
       isRtl ? 'text-right' : 'text-left'
     }`}>
       {/* Header Top Bar */}
@@ -105,22 +120,35 @@ function AppContent() {
           </div>
         </div>
 
-        {/* Configurations, language switches, and user elements */}
-        <div className="flex items-center gap-4">
+        {/* Configurations, theme, language switches, and user elements */}
+        <div className="flex items-center gap-3 md:gap-4">
           <button
             onClick={() => setViewMode('landing')}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-[#111827] border border-slate-800 text-indigo-400 hover:text-white rounded-xl transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-slate-900 border border-slate-800 text-indigo-400 hover:text-white rounded-xl transition-all"
             title={state.language === 'ar' ? 'الرجوع ومراجعة العروض' : 'Landing Gate'}
           >
             <Home className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{state.language === 'ar' ? 'موقع لاندينج' : 'Site Web'}</span>
           </button>
 
+          {/* Sun/Moon Theme Toggle */}
+          <button
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            className="p-2 bg-slate-950 hover:bg-slate-900 border border-slate-800 rounded-xl transition-all cursor-pointer flex items-center justify-center"
+            title={state.language === 'ar' ? 'تبديل المظهر الليلي / النهاري' : 'Toggle Theme'}
+          >
+            {theme === 'light' ? (
+              <Moon className="w-4 h-4 text-amber-500" />
+            ) : (
+              <Sun className="w-4 h-4 text-amber-400" />
+            )}
+          </button>
+
           {/* Advanced Language switcher drop-button */}
           <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
             <button 
               onClick={() => updateState({ language: 'ar' })}
-              className={`px-2.5 py-1.5 rounded-lg font-bold transition-all ${
+              className={`px-2.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 state.language === 'ar' 
                   ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-505 border-indigo-500/20 shadow' 
                   : 'text-slate-400 hover:text-white'
@@ -130,7 +158,7 @@ function AppContent() {
             </button>
             <button 
               onClick={() => updateState({ language: 'fr' })}
-              className={`px-2.5 py-1.5 rounded-lg font-bold transition-all ${
+              className={`px-2.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 state.language === 'fr' 
                   ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-505 border-indigo-500/20 shadow' 
                   : 'text-slate-400 hover:text-white'
@@ -140,7 +168,7 @@ function AppContent() {
             </button>
             <button 
               onClick={() => updateState({ language: 'en' })}
-              className={`px-2.5 py-1.5 rounded-lg font-bold transition-all ${
+              className={`px-2.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 state.language === 'en' 
                   ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-505 border-indigo-500/20 shadow' 
                   : 'text-slate-400 hover:text-white'
@@ -150,10 +178,20 @@ function AppContent() {
             </button>
           </div>
 
-          <div className="hidden md:flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-slate-400">
+          <div className="hidden xl:flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-slate-400">
             <User className="w-3.5 h-3.5 text-indigo-400" />
             <span className="font-semibold text-slate-300">fhouatis@gmail.com</span>
           </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={() => setViewMode('landing')}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 rounded-xl transition-all cursor-pointer"
+            title={state.language === 'ar' ? 'تسجيل الخروج من المنصة' : 'Logout Session'}
+          >
+            <LogOut className="w-3.5 h-3.5 text-rose-400" />
+            <span className="hidden md:inline">{state.language === 'ar' ? 'تسجيل الخروج' : 'Logout'}</span>
+          </button>
         </div>
       </header>
 
@@ -220,6 +258,44 @@ function AppContent() {
         </main>
       </div>
       <FinancialAssistant />
+
+      {confirmDialog && confirmDialog.isOpen && (
+        <div id="confirm-modal-overlay" className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+          <div id="confirm-modal-box" className="bg-[#0b1329] border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative space-y-4 text-center">
+            <div className="mx-auto w-12 h-12 bg-rose-500/10 rounded-full flex items-center justify-center border border-rose-500/20 text-rose-500">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-slate-100">
+                {state.language === 'ar' ? 'رسالة تأكيد' : (state.language === 'fr' ? 'Confirmation' : 'Confirmation')}
+              </h4>
+              <p className="text-xs text-slate-300 font-medium whitespace-pre-line leading-relaxed">
+                {confirmDialog.message}
+              </p>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                id="btn-confirm"
+                onClick={() => {
+                  confirmDialog.onConfirm();
+                }}
+                className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs py-2.5 px-4 rounded-xl transition-all shadow"
+              >
+                {state.language === 'ar' ? 'نعم' : (state.language === 'fr' ? 'Oui' : 'Yes')}
+              </button>
+              <button
+                id="btn-cancel"
+                onClick={closeConfirm}
+                className="flex-1 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 font-bold text-xs py-2.5 px-4 rounded-xl transition-all"
+              >
+                {state.language === 'ar' ? 'إلغاء' : (state.language === 'fr' ? 'Annuler' : 'Cancel')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

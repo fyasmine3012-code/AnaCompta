@@ -10,6 +10,8 @@ import { GlobalSynthesis } from './components/GlobalSynthesis';
 import { ConfigPage } from './components/ConfigPage';
 import { FinancialAssistant } from './components/FinancialAssistant';
 import { LandingPage } from './components/LandingPage';
+import { HistoricalAIAnalysis } from './components/HistoricalAIAnalysis';
+import { ExportBar } from './components/ExportBar';
 import { 
   Layers, 
   BookOpen, 
@@ -27,7 +29,8 @@ import {
   Home,
   Sun,
   Moon,
-  AlertCircle
+  AlertCircle,
+  BrainCircuit
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -66,6 +69,7 @@ function AppContent() {
     { id: 'production', label: t.production, icon: Factory },
     { id: 'costPrice', label: t.costPrice, icon: Calculator },
     { id: 'synthesis', label: t.synthesis, icon: Layers },
+    { id: 'historical', label: state.language === 'en' ? 'Historical & AI' : (state.language === 'fr' ? 'Historique & IA' : 'البيانات التاريخية والذكاء الاصطناعي'), icon: BrainCircuit },
     { id: 'settings', label: t.settings, icon: Settings },
   ];
 
@@ -77,6 +81,7 @@ function AppContent() {
       case 'production': return <ProductionPage />;
       case 'costPrice': return <CostPricePage />;
       case 'synthesis': return <GlobalSynthesis />;
+      case 'historical': return <HistoricalAIAnalysis />;
       case 'settings': return <ConfigPage />;
       default: return <Dashboard />;
     }
@@ -253,7 +258,8 @@ function AppContent() {
         )}
 
         {/* Interactive content workspace area scrollable */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 space-y-8 overflow-y-auto max-w-full">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 space-y-6 overflow-y-auto max-w-full">
+          <ExportBar />
           {renderActiveScreen()}
         </main>
       </div>

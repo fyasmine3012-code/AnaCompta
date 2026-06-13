@@ -57,6 +57,49 @@ export interface TrciRow {
   pcts: Record<string, number>; // workshopId -> percentage
 }
 
+export interface HistoricalFile {
+  id: string;
+  name: string;
+  size: number;
+  uploadDate: string;
+  year: string;
+  recordCount: number;
+  status: 'Completed' | 'Analyzing' | 'Failed';
+}
+
+export interface HistoricalRecord {
+  year: string;
+  rawMaterials: {
+    id: string;
+    name: string;
+    purchasePrice: number;
+    purchaseQty: number;
+    inventoryValue: number;
+    cump: number;
+  }[];
+  products: {
+    id: string;
+    name: string;
+    productionCost: number;
+    productionVolume: number;
+    quantitySold: number;
+    sellingPrice: number;
+    revenue: number;
+    costPrice: number;
+    analyticMargin: number;
+    wastePercentage: number;
+    variance: number;
+  }[];
+  directCosts: number;
+  indirectCosts: number;
+  kpis: {
+    totalSales: number;
+    totalCostPrice: number;
+    netProfit: number;
+    industrialEfficiency: number;
+  };
+}
+
 export interface ERPState {
   rawMaterials: RawMaterial[];
   products: Product[];
@@ -65,4 +108,6 @@ export interface ERPState {
   globalSupp: number; // Supplementary expenses
   globalNonInc: number; // Non-incorporable expenses
   language: 'ar' | 'fr' | 'en';
+  historicalFiles?: HistoricalFile[];
+  historicalRecords?: HistoricalRecord[];
 }

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ERPState, RawMaterial, Product, Workshop, TrciRow } from '../types';
+import { ERPState, RawMaterial, Product, Workshop, TrciRow, HistoricalFile, HistoricalRecord } from '../types';
 
 interface AppContextProps {
   state: ERPState;
@@ -152,6 +152,72 @@ const INITIAL_TRCI_ROWS: TrciRow[] = CHARTS_OF_ACCOUNTS.map((acc, index) => {
   };
 });
 
+const DEFAULT_HISTORICAL_FILES: HistoricalFile[] = [
+  { id: "file_2022", name: "Rapport_TRCI_SSC_2022.xlsx", size: 145000, uploadDate: "2023-01-15 14:22", year: "2022", recordCount: 12, status: 'Completed' },
+  { id: "file_2023", name: "Rapport_TRCI_SSC_2023.xlsx", size: 151000, uploadDate: "2024-01-18 09:30", year: "2023", recordCount: 14, status: 'Completed' },
+  { id: "file_2024", name: "Rapport_TRCI_SSC_2024.xlsx", size: 168000, uploadDate: "2025-01-12 11:15", year: "2024", recordCount: 17, status: 'Completed' }
+];
+
+const DEFAULT_HISTORICAL_RECORDS: HistoricalRecord[] = [
+  {
+    year: "2022",
+    rawMaterials: [
+      { id: "mat_bois", name: "خشب الزان / Bois de Hêtre", purchasePrice: 280, purchaseQty: 1800, inventoryValue: 390000, cump: 275 },
+      { id: "mat_plast", name: "بلاستيك خام / Plastique brut", purchasePrice: 35, purchaseQty: 7000, inventoryValue: 110000, cump: 34 }
+    ],
+    products: [
+      { id: "prod_table", name: "طاولة خشبية / Table en bois", productionCost: 1800, productionVolume: 350, quantitySold: 320, sellingPrice: 2400, revenue: 768000, costPrice: 1950, analyticMargin: 450, wastePercentage: 6.2, variance: -80 },
+      { id: "prod_chaise", name: "كرسي بلاستيكي / Chaise PVC", productionCost: 450, productionVolume: 1000, quantitySold: 950, sellingPrice: 600, revenue: 570000, costPrice: 510, analyticMargin: 90, wastePercentage: 11.5, variance: 22 }
+    ],
+    directCosts: 850000,
+    indirectCosts: 1100000,
+    kpis: {
+      totalSales: 1338000,
+      totalCostPrice: 1108500,
+      netProfit: 229500,
+      industrialEfficiency: 82.5
+    }
+  },
+  {
+    year: "2023",
+    rawMaterials: [
+      { id: "mat_bois", name: "خشب الزان / Bois de Hêtre", purchasePrice: 300, purchaseQty: 1950, inventoryValue: 430000, cump: 295 },
+      { id: "mat_plast", name: "بلاستيك خام / Plastique brut", purchasePrice: 38, purchaseQty: 7500, inventoryValue: 120000, cump: 37 }
+    ],
+    products: [
+      { id: "prod_table", name: "طاولة خشبية / Table en bois", productionCost: 1950, productionVolume: 380, quantitySold: 340, sellingPrice: 2450, revenue: 833000, costPrice: 2110, analyticMargin: 340, wastePercentage: 5.8, variance: -40 },
+      { id: "prod_chaise", name: "كرسي بلاستيكي / Chaise PVC", productionCost: 480, productionVolume: 1150, quantitySold: 1200, sellingPrice: 620, revenue: 744000, costPrice: 540, analyticMargin: 80, wastePercentage: 10.2, variance: 15 }
+    ],
+    directCosts: 940000,
+    indirectCosts: 1210000,
+    kpis: {
+      totalSales: 1577000,
+      totalCostPrice: 1365400,
+      netProfit: 211600,
+      industrialEfficiency: 85.0
+    }
+  },
+  {
+    year: "2024",
+    rawMaterials: [
+      { id: "mat_bois", name: "خشب الزان / Bois de Hêtre", purchasePrice: 320, purchaseQty: 2000, inventoryValue: 450000, cump: 310 },
+      { id: "mat_plast", name: "بلاستيك خام / Plastique brut", purchasePrice: 40, purchaseQty: 8000, inventoryValue: 125000, cump: 39 }
+    ],
+    products: [
+      { id: "prod_table", name: "طاولة خشبية / Table en bois", productionCost: 2050, productionVolume: 400, quantitySold: 350, sellingPrice: 2500, revenue: 875000, costPrice: 2240, analyticMargin: 260, wastePercentage: 5.5, variance: -10 },
+      { id: "prod_chaise", name: "كرسي بلاستيكي / Chaise PVC", productionCost: 510, productionVolume: 1200, quantitySold: 1400, sellingPrice: 650, revenue: 910000, costPrice: 580, analyticMargin: 70, wastePercentage: 9.8, variance: 5 }
+    ],
+    directCosts: 1020000,
+    indirectCosts: 1290000,
+    kpis: {
+      totalSales: 1785000,
+      totalCostPrice: 1596000,
+      netProfit: 189000,
+      industrialEfficiency: 87.2
+    }
+  }
+];
+
 const DEFAULT_STATE: ERPState = {
   rawMaterials: DEFAULT_MATERIALS,
   products: DEFAULT_PRODUCTS,
@@ -159,7 +225,9 @@ const DEFAULT_STATE: ERPState = {
   trciRows: INITIAL_TRCI_ROWS,
   globalSupp: 75000, // supplementary charges
   globalNonInc: 45000, // non-incorporable expenses
-  language: 'ar'
+  language: 'ar',
+  historicalFiles: DEFAULT_HISTORICAL_FILES,
+  historicalRecords: DEFAULT_HISTORICAL_RECORDS
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -170,6 +238,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const parsed = JSON.parse(saved);
         // Ensure language is a valid key
         if (!parsed.language) parsed.language = 'ar';
+        // Retrofill historical properties
+        if (!parsed.historicalFiles) parsed.historicalFiles = DEFAULT_HISTORICAL_FILES;
+        if (!parsed.historicalRecords) parsed.historicalRecords = DEFAULT_HISTORICAL_RECORDS;
         return parsed;
       } catch (e) {
         console.error("Failed to parse local storage ERP state", e);

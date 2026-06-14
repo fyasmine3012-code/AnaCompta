@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تجربة المساعد المحاسبي الذكي - SSC</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #f4f7f6; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; }
+        button { background-color: #2ecc71; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; margin-top: 20px; }
+        button:disabled { background-color: #95a5a6; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>اختبار رفع ملف الـ Excel إلى n8n</h2>
+    <p>مشروع التكاليف الاستراتيجية الذكي (SSC)</p>
+    
+    <input type="file" id="excelFileInput" accept=".xlsx, .xls" />
+    <br>
+    <button id="analyzeButton">تحليل البيانات بالذكاء الاصطناعي</button>
+</div>
+
+<script>
+const fileInput = document.getElementById('excelFileInput');
+const analyzeButton = document.getElementById('analyzeButton');
+
+analyzeButton.addEventListener('click', async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+        alert("من فضلك اختر ملف Excel أولاً!");
+        return;
+    }
+
+    analyzeButton.innerText = "جاري التحليل بواسطة الذكاء الاصطناعي...";
+    analyzeButton.disabled = true;
+
+    const formData = new FormData();
+    formData.append("file", file); 
+
+    try {
+        // ⚠️ هنا ضع رابط الـ Test URL الخاص بك من عقدة الـ Webhook في n8n بدلاً من الرابط التجريبي أدناه
+        const n8nWebhookUrl = "https://your-n8n-domain.com/webhook-test/xxxx-xxxx";
+
+        const response = await fetch(n8nWebhookUrl, {
+            method: "POST",
+            body: formData 
+        });
+
+        if (response.ok) {
+            alert("رائع! استقبلت أداة n8n الملف بنجاح، وجاري التحليل في الخلفية. انظر لشاشة n8n الآن!");
+        } else {
+            alert("فشل الإرسال. تأكد أنك ضغطت على Listen for test event في n8n.");
+        }
+    } catch (error) {
+        console.error("خطأ:", error);
+        alert("حدث خطأ في الاتصال بالـ Webhook.");
+    } finally {
+        analyzeButton.innerText = "تحليل البيانات بالذكاء الاصطناعي";
+        analyzeButton.disabled = false;
+    }
+});
+</script>
+
+</body>
+</html>

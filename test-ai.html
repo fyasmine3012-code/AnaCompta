@@ -42,7 +42,7 @@ analyzeButton.addEventListener('click', async () => {
         // ⚠️ هنا ضع رابط الـ Test URL الخاص بك من عقدة الـ Webhook في n8n بدلاً من الرابط التجريبي أدناه
         const n8nWebhookUrl = "https://workfella.app.n8n.cloud/webhook-test/4ad2fb45-1aad-4cc2-ac5b-7844ca5b442c";
 
-        const response = await fetch(n8nWebhookUrl, {
+        const response = await fetch('https://your-n8n-instance.com/webhook-test/xxxx', { ... })
             method: "POST",
             body: formData 
         });

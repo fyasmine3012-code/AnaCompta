@@ -597,6 +597,24 @@ export const HistoricalAIAnalysis: React.FC = () => {
       return;
     }
 
+    const isPDF = file.name.endsWith('.pdf') || file.type === 'application/pdf';
+    if (isPDF) {
+      setUploadStatus({
+        type: 'loading',
+        message: lang === 'ar' ? `جاري قراءة ملف PDF وتحليله بذكاء...` : `Reading and parsing PDF document...`
+      });
+      const r = new FileReader();
+      r.onload = async (evt) => {
+        const base64Data = (evt.target?.result as string) || '';
+        executeImportWithMapping(file, base64Data, {});
+      };
+      r.onerror = () => {
+        setUploadStatus({ type: 'err', message: t.uploadError });
+      };
+      r.readAsDataURL(file);
+      return;
+    }
+
     setUploadStatus({ type: 'loading', message: t.statusAnalyzing });
     
     const reader = new FileReader();

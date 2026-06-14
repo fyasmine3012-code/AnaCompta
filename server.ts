@@ -11,6 +11,30 @@ const PORT = 3000;
 
 app.use(express.json());
 
+// Normalize netlify serverless functions requests
+app.use((req, res, next) => {
+  const originalUrl = req.url;
+  
+  if (req.url.startsWith("/.netlify/functions/api")) {
+    req.url = req.url.replace("/.netlify/functions/api", "");
+  }
+  
+  if (req.url.startsWith("//")) {
+    req.url = req.url.substring(1);
+  }
+  
+  if (!req.url.startsWith("/api") && req.url !== "") {
+    req.url = "/api" + (req.url.startsWith("/") ? req.url : "/" + req.url);
+  }
+  
+  if (req.url.startsWith("/api/api")) {
+    req.url = req.url.replace("/api/api", "/api");
+  }
+  
+  console.log(`[Netlify Serverless router] Path translated: ${originalUrl} -> ${req.url}`);
+  next();
+});
+
 // Initialize Gemini Client server-side
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY || "",
@@ -220,16 +244,47 @@ Guidelines for extraction:
 4. Strictly return the JSON object only. No markdown formatting ticks, no commentary.
 `;
 
-    const result = await callGeminiWithRetry(async () => {
-      return await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: extractionPrompt,
-        config: {
-          responseMimeType: "application/json",
-          temperature: 0.1,
+    const isPDF = fileType === "application/pdf" || 
+                  fileName.toLowerCase().endsWith(".pdf") || 
+                  fileContent.startsWith("data:application/pdf");
+
+    let result;
+    if (isPDF) {
+      let base64Data = fileContent;
+      if (base64Data.includes(";base64,")) {
+        base64Data = base64Data.split(";base64,")[1];
+      }
+      const pdfPart = {
+        inlineData: {
+          mimeType: "application/pdf",
+          data: base64Data,
         }
+      };
+      const textPart = {
+        text: extractionPrompt
+      };
+      result = await callGeminiWithRetry(async () => {
+        return await ai.models.generateContent({
+          model: "gemini-3.5-flash",
+          contents: { parts: [pdfPart, textPart] },
+          config: {
+            responseMimeType: "application/json",
+            temperature: 0.1,
+          }
+        });
       });
-    });
+    } else {
+      result = await callGeminiWithRetry(async () => {
+        return await ai.models.generateContent({
+          model: "gemini-3.5-flash",
+          contents: extractionPrompt,
+          config: {
+            responseMimeType: "application/json",
+            temperature: 0.1,
+          }
+        });
+      });
+    }
 
     if (result && result.text) {
       try {
@@ -660,6 +715,10 @@ async function main() {
   });
 }
 
-main().catch((err) => {
-  console.error("Error launching AnaCompta server node:", err);
-});
+if (!process.env.NETLIFY) {
+  main().catch((err) => {
+    console.error("Error launching AnaCompta server node:", err);
+  });
+}
+
+export { app };

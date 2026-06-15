@@ -48,6 +48,9 @@ async function callGeminiWithRetry<T>(fn: () => Promise<T>, retries = 3, delay =
 // Financial Assistant endpoint with full product context
 app.post("/api/chat", async (req, res) => {
   try {
+    console.log("===== CHAT API CALLED =====");
+    console.log("Gemini key exists:", !!process.env.GEMINI_API_KEY);
+    console.log("Node env:", process.env.NODE_ENV);
     const { message, history = [], context = {} } = req.body;
 
     if (!process.env.GEMINI_API_KEY) {

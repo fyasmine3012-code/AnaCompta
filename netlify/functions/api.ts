@@ -1,6 +1,12 @@
+import express from "express";
 import serverless from "serverless-http";
-import { app } from "../../server";
 
-const handler = serverless(app);
+const app = express();
 
-export { handler };
+app.use(express.json());
+
+app.post("/api/chat", (req, res) => {
+  res.json({ text: "test working" });
+});
+
+export const handler = serverless(app);

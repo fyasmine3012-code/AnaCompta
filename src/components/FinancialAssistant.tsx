@@ -99,7 +99,9 @@ export const FinancialAssistant: React.FC = () => {
   try {
   data = JSON.parse(text);
 } catch (e) {
-  console.error("Server returned invalid JSON:", text);
+  console.error("Invalid JSON from server:", text);
+  throw new Error("Server returned invalid response");
+};
 
      const fallbackMsg =
     state.language === 'ar'

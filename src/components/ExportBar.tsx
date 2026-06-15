@@ -36,9 +36,9 @@ export function ExportBar() {
   // Configuration parameters for the dynamic PDF structure
   const [showConfig, setShowConfig] = useState(false);
   const [companyName, setCompanyName] = useState(
-    state.language === 'ar' ? "مؤسسة النجاح الصناعية (AnaCompta)" : 
-    state.language === 'fr' ? "Entreprise Succès Industriel (AnaCompta)" : 
-    "Succes Industrial Enterprise (AnaCompta)"
+    state.language === 'ar' ? "مؤسسة النجاح الصناعية (FyCompta)" : 
+    state.language === 'fr' ? "Entreprise Succès Industriel (FyCompta)" : 
+    "Succes Industrial Enterprise (FyCompta)"
   );
   const [financialPeriod, setFinancialPeriod] = useState(
     state.language === 'ar' ? "الربع الأول من عام 2026" : 
@@ -296,7 +296,7 @@ export function ExportBar() {
       
       const statusText = profit >= 0 
         ? (lang === 'ar' 
-            ? `المنشأة تحقق ربحاً صافياً إجمالياً قدره ${profit.toLocaleString()} دج بهامش ربح يبلغ ${netMargin.toFixed(2)}%. الأداء المالي ممتاز وإيجابي بناءً على المدخلات الحالية في AnaCompta ERP.`
+            ? `المنشأة تحقق ربحاً صافياً إجمالياً قدره ${profit.toLocaleString()} دج بهامش ربح يبلغ ${netMargin.toFixed(2)}%. الأداء المالي ممتاز وإيجابي بناءً على المدخلات الحالية في FyCompta.`
             : `The business generated a net corporate profit of ${profit.toLocaleString()} DA with a net profit margin of ${netMargin.toFixed(2)}%. The financial performance is sound and healthy.`)
         : (lang === 'ar'
             ? `المنشأة تسجل عجزاً أو خسارة كلية قدرها ${Math.abs(profit).toLocaleString()} دج بهامش سلبي يبلغ ${netMargin.toFixed(2)}%. يوصى بتحسين تشغيل الأقسام والتأكد من ملاءمة أسعار البيع والتحكم السليم بالأعب.`
@@ -312,7 +312,7 @@ export function ExportBar() {
       const ws5 = XLSX.utils.json_to_sheet(sheet5Rows, { header: sheet5Headers });
       XLSX.utils.book_append_sheet(wb, ws5, "Analyse Financière");
 
-      XLSX.writeFile(wb, `AnaCompta_ERP_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      XLSX.writeFile(wb, `FyCompta_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
       
       setExcelSuccess(true);
       setTimeout(() => setExcelSuccess(false), 4000);
@@ -1053,7 +1053,7 @@ export function ExportBar() {
         }
       }
 
-      pdf.save(`AnaCompta_Report_${companyName.trim().replace(/[^a-zA-Z0-9\u0600-\u06FF]+/g, '_')}_${financialPeriod.trim().replace(/[^a-zA-Z0-9\u0600-\u06FF]+/g, '_')}.pdf`);
+      pdf.save(`FyCompta_Report_${companyName.trim().replace(/[^a-zA-Z0-9\u0600-\u06FF]+/g, '_')}_${financialPeriod.trim().replace(/[^a-zA-Z0-9\u0600-\u06FF]+/g, '_')}.pdf`);
 
       setPdfSuccess(true);
       setTimeout(() => setPdfSuccess(false), 5000);
@@ -1068,7 +1068,7 @@ export function ExportBar() {
 
   return (
     <div 
-      id="anacompta-export-module-bar" 
+      id="fycompta-export-module-bar" 
       className="bg-[#0b1227] border border-indigo-950/70 p-4 sm:p-5 rounded-2xl flex flex-col gap-4 shadow-2xl text-slate-200"
     >
       {/* Upper banner section */}
@@ -1090,7 +1090,7 @@ export function ExportBar() {
             </div>
             <p className="text-[10px] text-slate-400 mt-0.5 font-sans">
               {lang === 'ar' 
-                ? 'مستند مالي تفصيلي متعدد اللغات وقابل للتحميل والتعديل في ثوانٍ' 
+                ? '' 
                 : 'Instantly download state-accurate multi-lingual financial spreadsheets and PDF summaries'}
             </p>
           </div>
@@ -1208,7 +1208,7 @@ export function ExportBar() {
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
               className="w-full bg-slate-950/90 border border-slate-850 p-2 text-xs text-slate-100 rounded-xl focus:outline-none focus:border-indigo-550 transition-colors"
-              placeholder="E.g. AnaCompta Group"
+              placeholder="E.g. FyCompta Group"
             />
           </div>
 

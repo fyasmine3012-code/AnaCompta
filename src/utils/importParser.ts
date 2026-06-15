@@ -1,8 +1,8 @@
 /**
- * AnaCompta - Smart Import Mapping & Parsing Engine
+ * FyCompta - Smart Import Mapping & Parsing Engine
  * Highly resilient utility for automated column header discovery,
  * fuzzy synonym matching, multi-lingual translation layers, data type validation,
- * error report compounding, and ERP historical data conversion.
+ * error report compounding, and historical data conversion.
  */
 
 export interface ValidationError {

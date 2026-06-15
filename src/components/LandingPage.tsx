@@ -99,7 +99,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       probTitle: "لماذا تفقد الشركات الصناعية ربحيتها؟",
       probSub: "دراسة استقصائية لأكبر عوائق تضخم تكاليف المواد الأولية والتتبع الضعيف لأعباء الورش التوزيعية.",
       probCard: "المشاكل الحالية في المصانع",
-      solCard: "حلول AnaCompta الذكية",
+      solCard: "حلول FyCompta الذكية",
       prob1: "تأخر متكرر في حساب سعر التكلفة النهائي (غالباً نهاية الشهر).",
       prob2: "توزيع تقديري وعشوائي للمصاريف غير المباشرة (TRCI).",
       prob3: "عدم تتبع الهدر الصناعي وخسائر المواد الأولية أثناء التشغيل.",
@@ -138,7 +138,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       priceEnterpriseName: "المؤسسات الكبيرة",
       priceEnterpriseSub: "حلول مخصصة بالكامل مع خوادم معزولة وتكامل مع الأنظمة القديمة.",
       onboardingTitle: "مرحباً بك في عالم الإدارة الذكية",
-      onboardingSub: "أكمل الخطوات التالية لتخصيص نسختك المجانية من AnaCompta.",
+      onboardingSub: "أكمل الخطوات التالية لتخصيص نسختك المجانية من FyCompta.",
       step1Title: "الملف الشخصي",
       step2Title: "بيانات المؤسسة",
       step3Title: "تفعيل الخدمة",
@@ -162,7 +162,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
     },
     fr: {
       tagline: "Transformez vos données comptables en intelligence de gestion",
-      subTagline: "Le n°1 des ERP industriels en Algérie pour l'analyse des coûts standards, l'imputation analytique TRCI, et le suivi en temps réel de la rentabilité de vos ateliers.",
+      subTagline: "La plateforme n°1 en Algérie pour l'analyse des coûts standards, l'imputation analytique TRCI, et le suivi en temps réel de la rentabilité de vos ateliers.",
       ctaDemo: "Demander une démonstration",
       ctaTrial: "Essai gratuit 14 jours",
       ctaLearn: "En savoir plus",
@@ -172,7 +172,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       probTitle: "Pourquoi les entreprises perdent-elles leur rentabilité ?",
       probSub: "Une analyse des fuites de marge cachées par le manque de précision dans l'évaluation des stocks et des frais de transport direct.",
       probCard: "Problèmes actuels",
-      solCard: "Solutions AnaCompta",
+      solCard: "Solutions FyCompta",
       prob1: "Retard crucial dans le calcul du coût de revient (calculs mensuels tardifs).",
       prob2: "Allocation arbitraire des frais généraux et charges indirectes.",
       prob3: "Zéro point d'alerte sur le gaspillage de matières premières et le rebut.",
@@ -210,7 +210,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       priceProSub: "Idéal pour piloter plusieurs ateliers de production complexes.",
       priceEnterpriseName: "Grandes Entreprises",
       priceEnterpriseSub: "SLA garanti, serveurs privés dédiés et intégration SAP/Oracle.",
-      onboardingTitle: "Bienvenue sur AnaCompta ERP",
+      onboardingTitle: "Bienvenue sur FyCompta",
       onboardingSub: "Créez votre environnement de travail en quelques instants.",
       step1Title: "Votre Profil",
       step2Title: "Votre Entreprise",
@@ -231,11 +231,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       payBank: "Virement Bancaire (BFR / Banque d'Algérie)",
       payDoc: "Demander une Facture Proforma officielle",
       payCard: "Paiement en ligne (Carte CIB / Dahabia)",
-      btnLaunch: "Lancer le tableau de bord ERP"
+      btnLaunch: "Lancer le tableau de bord"
     },
     en: {
       tagline: "Transform your accounting data into executive decisions",
-      subTagline: "The #1 industrial ERP in Algeria for standard costing, indirect TRCI material allocation, scrap radar monitoring, and product group profit analysis.",
+      subTagline: "The #1 industrial platform in Algeria for standard costing, indirect TRCI material allocation, scrap radar monitoring, and product group profit analysis.",
       ctaDemo: "Request a Demo",
       ctaTrial: "14-Day Free Trial",
       ctaLearn: "Learn More",
@@ -245,7 +245,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       probTitle: "Why do industrial factories lose margin?",
       probSub: "An audit of direct logistics overhead leaking into raw material purchase ledger entries.",
       probCard: "Current Factory Roadblocks",
-      solCard: "AnaCompta Solutions",
+      solCard: "FyCompta Solutions",
       prob1: "Crucial delay in compiling unit cost prices (often calculated monthly).",
       prob2: "Arbitrary allocation formulas for workshop utilities and TRCI.",
       prob3: "Zero visibility on operational scrap weights and physical waste.",
@@ -283,7 +283,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       priceProSub: "Best seller for factories running multiple custom workshops.",
       priceEnterpriseName: "Grandes Entreprises",
       priceEnterpriseSub: "Full dedicated high-speed servers, tailored SLAs, and SAP connectors.",
-      onboardingTitle: "Welcome to AnaCompta ERP",
+      onboardingTitle: "Welcome to FyCompta",
       onboardingSub: "Configure your company profile to activate your automated sandbox.",
       step1Title: "Your Profile",
       step2Title: "Your Organization",
@@ -300,11 +300,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       trialText: "Enjoy 14 days of complete premium features, analytical allocations, and AI standby audit.",
       btnActivate: "Activate my 14 Days Free trial",
       paymentHeader: "Secure Subscription Continuance",
-      paymentText: "Choose your fallback payment method to ensure continuous ERP uptime after sandbox trial:",
+      paymentText: "Choose your fallback payment method to ensure continuous system uptime after sandbox trial:",
       payBank: "Bank Wire Transfer (Banque d'Algérie / CCP)",
       payDoc: "Generate a Proforma Invoice draft",
       payCard: "Credit Card (Golden Dahabia / CIB cloud payment gateway)",
-      btnLaunch: "Enter the Interactive ERP Dashboard"
+      btnLaunch: "Enter the Interactive Dashboard"
     }
   };
 
@@ -323,8 +323,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
             </div>
             <div>
               <span className="text-lg font-black tracking-wide text-slate-900 flex items-center gap-1.5 font-sans">
-                <span>AnaCompta</span>
-                <span className="text-[10px] bg-indigo-50 text-indigo-750 border border-indigo-200/50 px-1.5 py-0.5 rounded font-black uppercase">ERP</span>
+                <span>FyCompta</span>
               </span>
               <span className="text-[9.5px] text-slate-500 font-bold block -mt-1">{state.language === 'ar' ? 'الذكاء الصناعي المحاسبي' : 'AI Industrial Accounting'}</span>
             </div>
@@ -433,7 +432,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
           <div className="lg:col-span-5 space-y-6 text-center lg:text-right" style={{ textAlign: isRtl ? 'right' : 'left' }}>
             <div className="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/20 px-3.5 py-1 rounded-full text-indigo-400 text-xs font-black">
               <Sparkles className="w-4 h-4 animate-spin-slow duration-1000" />
-              <span>{state.language === 'ar' ? 'نظام المحاسبة التحليلية المطور للجزائر' : 'Analytic ERP for Algerian Manufacturers'}</span>
+              <span>{state.language === 'ar' ? 'نظام المحاسبة التحليلية المطور للجزائر' : 'Analytic Platform for Algerian Manufacturers'}</span>
             </div>
             
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-black leading-[1.2] text-white tracking-tight">
@@ -604,7 +603,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
               </ul>
             </motion.div>
 
-            {/* Blue Card: Solutions AnaCompta */}
+            {/* Blue Card: Solutions FyCompta */}
             <motion.div 
               whileHover={{ y: -4 }}
               className="bg-indigo-50/40 border border-indigo-200/80 rounded-3xl p-6 md:p-8 space-y-6 shadow-md relative overflow-hidden"
@@ -614,7 +613,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                 <div className="w-11 h-11 rounded-xl bg-indigo-100/80 text-indigo-700 flex items-center justify-center">
                   <CheckCircle className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-black text-indigo-950">{state.language === 'ar' ? 'حلول AnaCompta الذكية' : 'Solutions AnaCompta'}</h3>
+                <h3 className="text-lg font-black text-indigo-950">{state.language === 'ar' ? 'حلول FyCompta الذكية' : 'Solutions FyCompta'}</h3>
               </div>
 
               <ul className="space-y-4 relative z-10">
@@ -837,7 +836,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                 <ul className="space-y-3 pt-4 border-t border-slate-100 text-xs text-slate-600 font-semibold">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-indigo-605 text-indigo-500 shrink-0" />
-                    <span>{state.language === 'ar' ? 'تكامل تام مع أنظمة SAP, ERP, Oracle' : 'Oracle & SAP data synchronizer pipelines'}</span>
+                    <span>{state.language === 'ar' ? 'تكامل تام مع أنظمة SAP, Oracle' : 'Oracle & SAP data synchronizer pipelines'}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-indigo-605 text-indigo-500 shrink-0" />

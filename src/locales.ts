@@ -1,7 +1,7 @@
 export const locales = {
   ar: {
-    appTitle: "تطبيق محاسبة التكاليف",
-    subtitle: "SSC - Smart Strategic Costing & ERP",
+    appTitle: "إدارة محاسبة التكاليف",
+    subtitle: "",
     dashboard: "لوحة القيادة",
     trci: "جدول توزيع الأعباء (TRCI)",
     purchases: "تكلفة الشراء والمخازن",
@@ -134,7 +134,7 @@ export const locales = {
 
     // Settings
     settingsTitle: "إدارة البيانات الهيكلية والتهيئة الأساسية",
-    settingsDesc: "المرجع الموحد للتهيئة وسرية المدخلات. التغييرات تنعكس على كافة الصفحات فورياً وبشكل تلقائي.",
+    settingsDesc: "",
     manageRawMaterials: "إدارة المواد الأولية",
     manageProducts: "إدارة المنتجات",
     manageWorkshops: "إدارة ورشات العمل ومراكز التوزيع",
@@ -150,8 +150,8 @@ export const locales = {
     confirmDelete: "هل ترغب في حذف هذا العنصر؟ سيتم إزالة كافة الروابط المرتبطة به في الجداول."
   },
   fr: {
-    appTitle: "Comptabilité de Coûts ERP",
-    subtitle: "SSC - Smart Strategic Costing & ERP",
+    appTitle: "Comptabilité de Coûts",
+    subtitle: "",
     dashboard: "Tableau de Bord",
     trci: "Tableau de Répartition (TRCI)",
     purchases: "Coût d'Achat & Stocks",
@@ -194,7 +194,7 @@ export const locales = {
     activeMaterials: "Matières Premières Actives",
     activeProducts: "Produits Finis sous Suivi",
     activeWorkshopsCount: "Nombre d'Ateliers de Production",
-    operationalStatus: "Statut Opérationnel ERP",
+    operationalStatus: "Statut Opérationnel",
     systemLive: "Synchronisé en Temps Réel",
 
     // TRCI
@@ -223,7 +223,7 @@ export const locales = {
     importApproCost: "Montant Unitaire importé (Section Approvisionnement) :",
     addMaterialTitle: "Ajouter une Nouvelle Matière Première",
     materialNamePlaceholder: "Ex: Bois de hêtre, Plastique brut...",
-    insertInSystem: "Insérer dans l'ERP",
+    insertInSystem: "Insérer dans le Système",
     basicPurchasePrice: "Prix d'Achat de Base (Facture)",
     directFreightExpenses: "Frais Directs sur Achats (Transport/Douane)",
     indirectApproExpenses: "Charges Indirectes d'Approvisionnement",
@@ -283,8 +283,8 @@ export const locales = {
     globalReportTitle: "Rapports Industriels & Analyses de Synthèse",
 
     // Settings
-    settingsTitle: "Configurations & Alignement des Tables ERP",
-    settingsDesc: "Modifiez de manière centralisée les listes structurelles de l'ERP. Toute modification est répercutée dynamiquement en temps réel.",
+    settingsTitle: "Configurations & Alignement des Tables",
+    settingsDesc: "Modifiez de manière centralisée les listes structurelles. Toute modification est répercutée dynamiquement en temps réel.",
     manageRawMaterials: "Gérer les Matières Premières",
     manageProducts: "Gérer les Produits d'Étude",
     manageWorkshops: "Gérer les Ateliers & Centres de Coût",
@@ -300,8 +300,8 @@ export const locales = {
     confirmDelete: "Voulez-vous supprimer cet élément ? Cela supprimera toutes ses relations fonctionnelles dans les tableaux liés."
   },
   en: {
-    appTitle: "Cost Accounting ERP",
-    subtitle: "SSC - Smart Strategic Costing & ERP",
+    appTitle: "Cost Accounting",
+    subtitle: "",
     dashboard: "Dashboard",
     trci: "Allocation Table (TRCI)",
     purchases: "Purchase Cost & Stocks",
@@ -344,7 +344,7 @@ export const locales = {
     activeMaterials: "Active Raw Materials",
     activeProducts: "Monitored Finished Goods",
     activeWorkshopsCount: "Active Production Workshops",
-    operationalStatus: "ERP Operational Status",
+    operationalStatus: "Operational Status",
     systemLive: "Synced & Online in Real-time",
 
     // TRCI
@@ -373,7 +373,7 @@ export const locales = {
     importApproCost: "Procurement Unit Work Cost imported:",
     addMaterialTitle: "Add New Raw Material",
     materialNamePlaceholder: "Ex: Beech wood, crude nhựa...",
-    insertInSystem: "Insert to ERP",
+    insertInSystem: "Insert to System",
     basicPurchasePrice: "Basic Invoice Purchase Price",
     directFreightExpenses: "Direct Logistics Expenses (Freight/Customs)",
     indirectApproExpenses: "Indirect Department Expenses (Procurement)",
@@ -433,7 +433,7 @@ export const locales = {
     globalReportTitle: "Industrial Reports & Global Synthesis Analytics",
 
     // Settings
-    settingsTitle: "Configurations & ERP Reference Alignment",
+    settingsTitle: "Configurations & Reference Alignment",
     settingsDesc: "Modify system lists dynamically. Add, edit or delete raw materials, finished products, or workshop departments. Changes reflect instantly.",
     manageRawMaterials: "Manage Raw Materials",
     manageProducts: "Manage Finished Products",

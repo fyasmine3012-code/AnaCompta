@@ -54,7 +54,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>التقرير التنفيذي الذكي - AnaCompta AI</title>
+    <title>التقرير التنفيذي الذكي - FyCompta AI</title>
     <style>
         @page {
             size: A4;
@@ -66,7 +66,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
                 color: #a0aec0; 
             }
             @bottom-right { 
-                content: "تقرير تنفيذي مؤتمت | منصة AnaCompta AI"; 
+                content: "تقرير تنفيذي مؤتمت | منصة FyCompta AI"; 
                 font-family: system-ui, sans-serif; 
                 font-size: 8.5pt; 
                 color: #a0aec0; 
@@ -275,7 +275,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
     <div class="page-1">
         <div class="exec-header">
             <div class="company-branding">[شعار المؤسسة] ${d.company_name}</div>
-            <div class="platform-branding">تحليل ذكي بواسطة <span>AnaCompta AI</span></div>
+            <div class="platform-branding">تحليل ذكي بواسطة <span>FyCompta AI</span></div>
         </div>
 
         <div class="report-main-title">التقرير التنفيذي الشامل للوضعية المالية</div>
@@ -368,7 +368,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
     <div class="page-2">
         <div class="exec-header">
             <div class="company-branding">[شعار المؤسسة] ${d.company_name}</div>
-            <div class="platform-branding">لوحة التحكم الذكية | <span>AnaCompta AI</span></div>
+            <div class="platform-branding">لوحة التحكم الذكية | <span>FyCompta AI</span></div>
         </div>
 
         <h2 class="section-title">خامساً: لوحة مؤشرات الكفاءة والتحكم والسيولة التشغيلية</h2>
@@ -488,7 +488,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
         </div>
 
         <div class="automated-footer">
-            تم إنشاء هذا التقرير وتحليله برمتّه بشكل آلي بواسطة منصة <strong>AnaCompta AI</strong> اعتماداً بالكامل على البيانات الفعلية الحالية للمؤسسة والمخزنة في النظام.<br>
+            تم إنشاء هذا التقرير وتحليله برمتّه بشكل آلي بواسطة منصة <strong>FyCompta AI</strong> اعتماداً بالكامل على البيانات الفعلية الحالية للمؤسسة والمخزنة في النظام.<br>
             <strong>معرّف البصمة الرقمية للتقرير:</strong> ${d.report_digital_fingerprint} | <strong>تاريخ الاستخراج:</strong> ${d.issue_date} في تمام الساعة ${d.issue_time}
         </div>
     </div>
@@ -500,7 +500,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
 <html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>Rapport Exécutif Intelligent - AnaCompta AI</title>
+    <title>Rapport Exécutif Intelligent - FyCompta AI</title>
     <style>
         @page {
             size: A4;
@@ -512,7 +512,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
                 color: #a0aec0; 
             }
             @bottom-right { 
-                content: "Rapport Exécutif Automatisé | AnaCompta AI"; 
+                content: "Rapport Exécutif Automatisé | FyCompta AI"; 
                 font-family: system-ui, sans-serif; 
                 font-size: 8.5pt; 
                 color: #a0aec0; 
@@ -721,7 +721,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
     <div class="page-1">
         <div class="exec-header">
             <div class="company-branding">[Logo de l'Entreprise] ${d.company_name}</div>
-            <div class="platform-branding">Diagnostic IA par <span>AnaCompta AI</span></div>
+            <div class="platform-branding">Diagnostic IA par <span>FyCompta AI</span></div>
         </div>
 
         <div class="report-main-title">Rapport Exécutif de la Situation Financière</div>
@@ -814,7 +814,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
     <div class="page-2">
         <div class="exec-header">
             <div class="company-branding">[Logo de l'Entreprise] ${d.company_name}</div>
-            <div class="platform-branding">Pupitre de Contrôle IA | <span>AnaCompta AI</span></div>
+            <div class="platform-branding">Pupitre de Contrôle IA | <span>FyCompta AI</span></div>
         </div>
 
         <h2 class="section-title">V. Tableau de Bord d'Efficacité Opérationnelle et Rentabilité</h2>
@@ -934,7 +934,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
         </div>
 
         <div class="automated-footer">
-            Rapport entièrement modélisé et structuré de manière automatisée par la suite logicielle <strong>AnaCompta AI</strong> à partir des données de rentabilité réelles.<br>
+            Rapport entièrement modélisé et structuré de manière automatisée par la suite logicielle <strong>FyCompta AI</strong> à partir des données de rentabilité réelles.<br>
             <strong>Empreinte Numérique :</strong> ${d.report_digital_fingerprint} | <strong>Extrait le :</strong> ${d.issue_date} à ${d.issue_time}
         </div>
     </div>
@@ -946,7 +946,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>Smart Executive Report - AnaCompta AI</title>
+    <title>Smart Executive Report - FyCompta AI</title>
     <style>
         @page {
             size: A4;
@@ -958,7 +958,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
                 color: #a0aec0; 
             }
             @bottom-right { 
-                content: "Automated Executive Report | AnaCompta AI"; 
+                content: "Automated Executive Report | FyCompta AI"; 
                 font-family: system-ui, sans-serif; 
                 font-size: 8.5pt; 
                 color: #a0aec0; 
@@ -1167,7 +1167,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
     <div class="page-1">
         <div class="exec-header">
             <div class="company-branding">[Enterprise Logo] ${d.company_name}</div>
-            <div class="platform-branding">AI-Driven Intelligence by <span>AnaCompta AI</span></div>
+            <div class="platform-branding">AI-Driven Intelligence by <span>FyCompta AI</span></div>
         </div>
 
         <div class="report-main-title">Comprehensive Financial Executive Report</div>
@@ -1260,7 +1260,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
     <div class="page-2">
         <div class="exec-header">
             <div class="company-branding">[Enterprise Logo] ${d.company_name}</div>
-            <div class="platform-branding">AI Analytics Console | <span>AnaCompta AI</span></div>
+            <div class="platform-branding">AI Analytics Console | <span>FyCompta AI</span></div>
         </div>
 
         <h2 class="section-title">5. Efficiency, Control & Operating Liquidity Balance Scorecard</h2>
@@ -1380,7 +1380,7 @@ export function getExecutiveReportTemplate(lang: 'ar' | 'fr' | 'en', d: Executiv
         </div>
 
         <div class="automated-footer">
-            This document is automatically processed and analyzed by <strong>AnaCompta AI</strong> based strictly on current validated operations.<br>
+            This document is automatically processed and analyzed by <strong>FyCompta AI</strong> based strictly on current validated operations.<br>
             <strong>Digital Fingerprint:</strong> ${d.report_digital_fingerprint} | <strong>Extracted on:</strong> ${d.issue_date} at ${d.issue_time}
         </div>
     </div>

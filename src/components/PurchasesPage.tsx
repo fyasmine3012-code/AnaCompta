@@ -170,7 +170,7 @@ export const PurchasesPage: React.FC = () => {
                   {/* Purchase Cost Table Column */}
                   <div className="xl:col-span-2 space-y-3">
                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      {state.language === 'ar' ? 'جدول تكلفة الشراء المباشر وغير المباشر' : 'Direct & Indirect Purchase Cost Table'}
+                      {state.language === 'ar' ? '' : 'Direct & Indirect Purchase Cost Table'}
                     </h3>
                     <div className="border border-slate-800/60 rounded-xl overflow-hidden">
                       <table className="w-full text-center border-collapse text-xs select-none">

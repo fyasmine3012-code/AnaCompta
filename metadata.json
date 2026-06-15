@@ -1,6 +1,6 @@
 {
-  "name": "AnaCompta ERP",
-  "description": "Industrial Cost Accounting and Analytical ERP platform with advanced TRCI, Purchases, Production and Margin tracking across multiple currencies and languages.",
+  "name": "FyCompta",
+  "description": "Industrial Cost Accounting and Analytical platform with advanced TRCI, Purchases, Production and Margin tracking across multiple currencies and languages.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

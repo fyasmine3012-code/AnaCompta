@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import { GoogleGenAI } from "@google/genai";
+import { createServer as createViteServer } from "vite";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -47,9 +48,6 @@ async function callGeminiWithRetry<T>(fn: () => Promise<T>, retries = 3, delay =
 // Financial Assistant endpoint with full product context
 app.post("/api/chat", async (req, res) => {
   try {
-    console.log("===== CHAT API CALLED =====");
-    console.log("Gemini key exists:", !!process.env.GEMINI_API_KEY);
-    console.log("Node env:", process.env.NODE_ENV);
     const { message, history = [], context = {} } = req.body;
 
     if (!process.env.GEMINI_API_KEY) {
@@ -60,9 +58,9 @@ app.post("/api/chat", async (req, res) => {
 
     // Build standard, structured context prompt
     const contextPrompt = `
-You are the Senior Financial Analyst & Cost Accounting Consultant for AnaCompta.
-AnaCompta is an industrial cost accounting ERP.
-Below is the current data logged in the ERP:
+You are the Senior Financial Analyst & Cost Accounting Consultant for FyCompta.
+FyCompta is an industrial cost accounting system.
+Below is the current data logged in the platform:
 ${JSON.stringify(context, null, 2)}
 
 Analyze this data and keep it in mind to answer the user's questions in detail, highlighting accounting anomalies, profit variance (الانحرافات), and workshop cost bottlenecks.
@@ -70,7 +68,7 @@ Always give answers directly, professionally, and politely, preferring the same 
 `;
 
     const chatSession = ai.chats.create({
-      model: "gemini-1.5-pro",
+      model: "gemini-3.5-flash",
       config: {
         systemInstruction: contextPrompt,
         temperature: 0.2, // Low temperature for high precision accounting answers
@@ -184,7 +182,7 @@ Please use these mapped file columns to locate the respective data. If any mappe
       : "Please automatically detect raw material names, purchase prices, purchase quantities, products, production volumes, and revenues in this file.";
 
     const extractionPrompt = `
-You are the Chief Accounting Parser of AnaCompta.
+You are the Chief Accounting Parser of FyCompta.
 Extract the accounting and cost structures from this uploaded financial file and format them outputting a strict JSON schema representation for a single historical financial year.
 File Name: ${fileName}
 Detected/Target Year: ${detectedYear}
@@ -317,7 +315,7 @@ app.post("/api/historical-ai-forecast", async (req, res) => {
 
     if (!process.env.GEMINI_API_KEY) {
       const defaultArabicAnswer = `
-**تحليل الذاكرة التاريخية للشركة (AnaCompta AI Hub)**
+**تحليل الذاكرة التاريخية للشركة (FyCompta AI Hub)**
 
 1. **تحليل تطور التكاليف والأعباء**:
    - نلاحظ ارتفاعاً تدريجياً في سعر شراء مادة خشب الزان من **280 دج** في 2022 إلى **300 دج** في 2023 وصولاً إلى **320 دج** في 2024. هذا يعكس تضخماً ثابتاً بالتكاليف بمعدل **6.8% سنوياً**.
@@ -332,7 +330,7 @@ app.post("/api/historical-ai-forecast", async (req, res) => {
    - نقترح توقيع عقود توريد سنوية لمادة بلاستيك خام لتفادي انحرافات الأسعار غير المواتية المسجلة سنوياً في نهاية الربع الثالث.
 `;
       const defaultFrenchAnswer = `
-**Analyse de la Mémoire Historique par l'IA (AnaCompta AI Hub)**
+**Analyse de la Mémoire Historique par l'IA (FyCompta AI Hub)**
 
 1. **Évolution des Coûts & Charges** :
    - Hausse progressive du prix d'achat du Bois de Hêtre de **280 DA** (2022) à **320 DA** (2024), soit une inflation moyenne de **6.8% par an**.
@@ -368,7 +366,7 @@ app.post("/api/historical-ai-forecast", async (req, res) => {
 
     // Build extensive intelligence prompt leveraging both stored historical files and active workspace figures
     const analysisPrompt = `
-You are the Chief AI Financial Director & Strategic Planner for AnaCompta.
+You are the Chief AI Financial Director & Strategic Planner for FyCompta.
 You are running a forecast on both historical archived files of this company and its active operational state.
 
 Historical Database:
@@ -673,14 +671,29 @@ Analyze and output strict JSON.`,
 });
 
 // Vite Middleware Integration
-// Netlify-compatible server (NO VITE)
-app.use(express.json());
+async function main() {
+  if (process.env.NODE_ENV !== "production") {
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: "spa",
+    });
+    app.use(vite.middlewares);
+  } else {
+    const distPath = path.join(process.cwd(), "dist");
+    app.use(express.static(distPath));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
+    });
+  }
 
-export { app };
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`FyCompta Server running on http://0.0.0.0:${PORT}`);
+  });
+}
 
 if (!process.env.NETLIFY) {
   main().catch((err) => {
-    console.error("Error launching AnaCompta server node:", err);
+    console.error("Error launching FyCompta server node:", err);
   });
 }
 

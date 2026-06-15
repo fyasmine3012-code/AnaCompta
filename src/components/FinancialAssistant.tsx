@@ -31,8 +31,8 @@ export const FinancialAssistant: React.FC = () => {
   useEffect(() => {
     if (messages.length === 0) {
       const welcome = state.language === 'ar'
-        ? "مرحباً بك! أنا مساعدك المالي الذكي لكلفة ومحاسبة AnaCompta. لقد قمت بتحليل بيانات التكاليف والورشات وجاهز لمساعدتك في رصد الانحرافات، وتحليل الأرباح، واقتراح استراتيجيات خفض التكلفة. اسألني أي شيء!"
-        : "Welcome! I am your AnaCompta AI Financial Consultant. I have analyzed your structural matrix and workshops to provide strategic advice on profit margins, direct expense variances, and logistics optimization. How may I assist you today?";
+        ? "مرحباً بك! أنا مساعدك المالي الذكي لكلفة ومحاسبة FyCompta. لقد قمت بتحليل بيانات التكاليف والورشات وجاهز لمساعدتك في رصد الانحرافات، وتحليل الأرباح، واقتراح استراتيجيات خفض التكلفة. اسألني أي شيء!"
+        : "Welcome! I am your FyCompta AI Financial Consultant. I have analyzed your structural matrix and workshops to provide strategic advice on profit margins, direct expense variances, and logistics optimization. How may I assist you today?";
       setMessages([{ sender: 'assistant', text: welcome }]);
     }
   }, [state.language]);
@@ -92,24 +92,7 @@ export const FinancialAssistant: React.FC = () => {
         })
       });
 
-     const text = await response.text();
-
-  let data;
-
-  try {
-  data = JSON.parse(text);
-} catch (e) {
-  console.error("Invalid JSON from server:", text);
-  throw new Error("Server returned invalid response");
-};
-
-     const fallbackMsg =
-    state.language === 'ar'
-      ? "عذراً! حدث خطأ في الخادم (Server Error). يرجى المحاولة لاحقاً."
-      : "Server error occurred. Please try again later.";
-
-      throw new Error(fallbackMsg);
-}
+      const data = await response.json();
       if (response.ok && data.text) {
         setMessages(prev => [...prev, { sender: 'assistant', text: data.text }]);
       } else {
@@ -186,7 +169,7 @@ export const FinancialAssistant: React.FC = () => {
                   </h3>
                   <span className="text-[10px] text-teal-400 font-mono flex items-center gap-1 mt-0.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span>
-                    <span>AnaCompta Analysis Live</span>
+                    <span>FyCompta Analysis Live</span>
                   </span>
                 </div>
               </div>

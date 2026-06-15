@@ -118,7 +118,7 @@ function AppContent() {
             </h1>
             {/* Breadcrumb indicator */}
             <div className="flex items-center gap-1 text-[10px] text-slate-500 mt-0.5">
-              <span>AnaCompta ERP</span>
+              <span>FyCompta</span>
               <span>/</span>
               <span className="text-indigo-400 font-medium">{currentTabLabel}</span>
             </div>

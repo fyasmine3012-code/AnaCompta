@@ -187,7 +187,7 @@ const localT = {
     predictedMargin: "Predicted Target Profit Margin (Table)",
     mostProfitable: "Historically Most Profitable Product",
     leastProfitable: "Historically Least Profitable Product",
-    confirmDelete: "Are you sure you want to delete this historical file? This will not alter any of your active ERP workspace data.",
+    confirmDelete: "Are you sure you want to delete this historical file? This will not alter any of your active workspace data.",
     uploadSuccess: "File analyzed successfully and incorporated into AI historical library.",
     uploadError: "Could not extract standard cost structures from the uploaded archive.",
     allDataScope: "Data Scope & Strategic AI"
@@ -824,7 +824,7 @@ export const HistoricalAIAnalysis: React.FC = () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonData, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `erp_cost_accounting_${xlsxResult?.company_data?.name || 'export'}.json`);
+    downloadAnchor.setAttribute("download", `compta_cost_accounting_${xlsxResult?.company_data?.name || 'export'}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -841,11 +841,11 @@ export const HistoricalAIAnalysis: React.FC = () => {
                 <Cpu className="w-3 h-3" />
                 <span>Smart Mapping Active</span>
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">ERP WORKSPACE v2.4.0</span>
+              <span className="text-[10px] text-slate-500 font-mono">WORKSPACE v2.4.0</span>
             </div>
             <h2 className="text-xl font-black text-slate-100 flex items-center gap-2.5">
               <BrainCircuit className="w-6 h-6 text-indigo-400" />
-              <span>مساعد محاسبة التكاليف الذكي للشركات (Cost Accounting ERP Assistant)</span>
+              <span>مساعد محاسبة التكاليف الذكي للشركات (Cost Accounting Assistant)</span>
             </h2>
             <p className="text-xs text-slate-400 leading-relaxed max-w-2xl">
               تصفح الأوراق، تحليل هوامش الورشات، تتبع انحرافات الميزانية، والوصول المباشر لهياكل JSON المصممة خصيصاً للتخزين في قاعدة البيانات.

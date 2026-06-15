@@ -1,7 +1,6 @@
 import express from "express";
 import path from "path";
 import { GoogleGenAI } from "@google/genai";
-import { createServer as createViteServer } from "vite";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -674,25 +673,24 @@ Analyze and output strict JSON.`,
 });
 
 // Vite Middleware Integration
-async function main() {
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
-  }
+// Netlify-compatible server (NO VITE)
+app.use(express.json());
+
+// Serve frontend only if you are NOT on Netlify Functions
+if (!process.env.NETLIFY) {
+  const distPath = path.join(process.cwd(), "dist");
+  app.use(express.static(distPath));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(distPath, "index.html"));
+  });
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`AnaCompta Server running on http://0.0.0.0:${PORT}`);
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
 }
+
+export { app };
 
 if (!process.env.NETLIFY) {
   main().catch((err) => {

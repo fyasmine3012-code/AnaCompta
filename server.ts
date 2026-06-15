@@ -11,30 +11,6 @@ const PORT = 3000;
 
 app.use(express.json());
 
-// Normalize netlify serverless functions requests
-app.use((req, res, next) => {
-  const originalUrl = req.url;
-  
-  if (req.url.startsWith("/.netlify/functions/api")) {
-    req.url = req.url.replace("/.netlify/functions/api", "");
-  }
-  
-  if (req.url.startsWith("//")) {
-    req.url = req.url.substring(1);
-  }
-  
-  if (!req.url.startsWith("/api") && req.url !== "") {
-    req.url = "/api" + (req.url.startsWith("/") ? req.url : "/" + req.url);
-  }
-  
-  if (req.url.startsWith("/api/api")) {
-    req.url = req.url.replace("/api/api", "/api");
-  }
-  
-  console.log(`[Netlify Serverless router] Path translated: ${originalUrl} -> ${req.url}`);
-  next();
-});
-
 // Initialize Gemini Client server-side
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY || "",

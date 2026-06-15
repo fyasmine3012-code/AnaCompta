@@ -70,7 +70,7 @@ Always give answers directly, professionally, and politely, preferring the same 
 `;
 
     const chatSession = ai.chats.create({
-      model: "gemini-3.5-flash",
+      model: "gemini-1.5-pro",
       config: {
         systemInstruction: contextPrompt,
         temperature: 0.2, // Low temperature for high precision accounting answers

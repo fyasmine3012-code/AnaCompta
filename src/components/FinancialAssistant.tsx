@@ -92,7 +92,22 @@ export const FinancialAssistant: React.FC = () => {
         })
       });
 
-      const data = await response.json();
+     const text = await response.text();
+
+  let data;
+
+  try {
+  data = JSON.parse(text);
+} catch (e) {
+  console.error("Server returned invalid JSON:", text);
+
+     const fallbackMsg =
+    state.language === 'ar'
+      ? "عذراً! حدث خطأ في الخادم (Server Error). يرجى المحاولة لاحقاً."
+      : "Server error occurred. Please try again later.";
+
+      throw new Error(fallbackMsg);
+}
       if (response.ok && data.text) {
         setMessages(prev => [...prev, { sender: 'assistant', text: data.text }]);
       } else {

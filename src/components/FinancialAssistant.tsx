@@ -47,8 +47,15 @@ export const FinancialAssistant: React.FC = () => {
     if (!textToSend) setInputValue('');
     setIsLoading(true);
 
+    // 1. إدارة أو توليد الـ Session ID والاحتفاظ به في المتصفح
+    let sessionId = localStorage.getItem('fycompta_session_id');
+    if (!sessionId) {
+      sessionId = 'session_' + Math.random().toString(36).substring(2, 11);
+      localStorage.setItem('fycompta_session_id', sessionId);
+    }
+
     try {
-      // Craft compact ERP data context to send to Gemini
+      // Craft compact ERP data context to send to n8n
       const contextSummary = {
         language: state.language,
         totalSales: calculatedValues.corporateSummary.totalSales,
@@ -82,28 +89,41 @@ export const FinancialAssistant: React.FC = () => {
         }))
       };
 
-      const response = await fetch('/api/chat', {
+      // 2. توجيه الطلب مباشرة إلى خادم n8n الخاص بكِ
+      // استبدلي الرابط بالأسفل برابط Production Webhook الحقيقي من n8n
+      const n8nWebhookUrl = 'https://your-n8n-instance.com/webhook/your-endpoint-id';
+
+      const response = await fetch(n8nWebhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: messageText,
-          history: messages.slice(-10), // Send last 10 messages for back-and-forth flow
+          sessionId: sessionId, // إرسال المعرّف لعقدة الذاكرة
+          history: messages.slice(-10), 
           context: contextSummary
         })
       });
 
       const data = await response.json();
-      if (response.ok && data.text) {
-        setMessages(prev => [...prev, { sender: 'assistant', text: data.text }]);
+      
+      // 3. استقبال الرد الراجع من الـ AI Agent في n8n وعرضه للمستخدم
+      // n8n يرجع النتيجة عادةً في حقل يسمى output أو text بناءً على استجابة الـ Agent
+      const aiResponseText = data.output || data.text || data.response;
+
+      if (response.ok && aiResponseText) {
+        setMessages(prev => [...prev, { sender: 'assistant', text: aiResponseText }]);
       } else {
         const fallbackMsg = state.language === 'ar'
-          ? (data.friendlyMessage || "عذراً! واجهت مشكلة في الاتصال بالخادم الذكي. يرجى التحقق من اتصالك بالإنترنت وتوفير مفتاح API في الإعدادات.")
-          : (data.friendlyMessageEn || "Oops! I encountered an issue reaching the server. Please verify your internet connection and inspect settings.");
+          ? "عذراً! واجهت مشكلة في معالجة البيانات عبر خادم n8n. يرجى مراجعة الـ Workflow."
+          : "Oops! The n8n workflow encountered an issue processing this request.";
         throw new Error(fallbackMsg);
       }
     } catch (e: any) {
       console.error("AI assistant message fetch exception:", e);
-      setMessages(prev => [...prev, { sender: 'assistant', text: e.message }]);
+      const errorFriendlyMessage = state.language === 'ar'
+        ? "عذراً، فشل الاتصال بالمساعد الذكي للأنظمة المحاسبية (n8n). يرجى التأكد من تشغيل الـ Workflow ونشر الموقع."
+        : "Connection to the n8n financial assistant workflow failed. Please verify your endpoints.";
+      setMessages(prev => [...prev, { sender: 'assistant', text: errorFriendlyMessage }]);
     } finally {
       setIsLoading(false);
     }

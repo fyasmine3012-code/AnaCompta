@@ -13,29 +13,162 @@
     color: #0f172a;
   }
 
-  /* Light theme color and background overrides for elements for an elegant Oracle/Odoo look */
-  html.light .bg-slate-950 {
-    background-color: #ffffff !important;
+  /* Comprehensive Light theme color and background overrides */
+  
+  /* Force main shell to have a clean, light page backdrop */
+  html.light div.bg-slate-950.min-h-screen,
+  html.light div.bg-slate-950,
+  html.light div.bg-[#11131a],
+  html.light .min-h-screen {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
   }
-  html.light .bg-slate-900 {
+
+  /* Sidebars, headers, and navigation sheets */
+  html.light aside,
+  html.light aside.bg-\[\#090d16\] {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 1px 0 3px 0 rgba(0, 0, 0, 0.02) !important;
+  }
+  
+  html.light header,
+  html.light header.bg-\[\#090d16\]\/80 {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Navigation button updates for light mode */
+  html.light aside button:not(.bg-indigo-600) {
+    color: #475569 !important;
+  }
+  html.light aside button:not(.bg-indigo-600):hover {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+  }
+
+  /* Convert all custom dark hex backgrounds to solid clean white or off-white cards */
+  html.light .bg-slate-950,
+  html.light .bg-[#090d16],
+  html.light .bg-[#080d1a],
+  html.light .bg-[#080d19],
+  html.light .bg-[#0b1329],
+  html.light .bg-[#0b1227],
+  html.light .bg-[#050811],
+  html.light .bg-[#0a1020],
+  html.light .bg-[#070c17],
+  html.light .bg-[#060a13],
+  html.light .bg-[#080d1a].lg\:col-span-4,
+  html.light .bg-[#080d1a].lg\:col-span-8,
+  html.light .glass-panel {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01) !important;
+  }
+
+  /* Soft light-gray sub-panels or tables */
+  html.light .bg-slate-900,
+  html.light .bg-[#060a12],
+  html.light .bg-[#05070c],
+  html.light .bg-[#070d1a],
+  html.light .bg-[#121826],
+  html.light .bg-[#151c2c],
+  html.light .bg-slate-850,
+  html.light .bg-slate-900\/50,
+  html.light .bg-slate-900\/20 {
     background-color: #f8fafc !important;
   }
-  html.light .bg-[#090d16] {
-    background-color: #ffffff !important;
+
+  /* Translucent overlays / backgrounds */
+  html.light .bg-slate-950\/20,
+  html.light .bg-slate-950\/30,
+  html.light .bg-slate-950\/40,
+  html.light .bg-slate-950\/60,
+  html.light .bg-slate-900\/15,
+  html.light .bg-slate-900\/40,
+  html.light .bg-slate-900\/60,
+  html.light .bg-\[\#070c17\]\/60,
+  html.light .bg-\[\#070c17\]\/70,
+  html.light .bg-\[\#0a1020\]\/50,
+  html.light .bg-\[\#0a1020\]\/80,
+  html.light .bg-\[\#0b1329\]\/65,
+  html.light .bg-\[\#050812\]\/90,
+  html.light .bg-\[\#121826\]\/80,
+  html.light .bg-\[\#151c2c\]\/80,
+  html.light .bg-\[\#0a1020\]\/50,
+  html.light .bg-\[\#090d16\]\/80 {
+    background-color: rgba(255, 255, 255, 0.98) !important;
+    border-color: #cbd5e1 !important;
   }
-  html.light .bg-[#090d16]\/80 {
-    background-color: rgba(255, 255, 255, 0.85) !important;
+
+  html.light .bg-[#111827] {
+    background-color: #e2e8f0 !important;
   }
-  html.light .bg-slate-950\/30 {
-    background-color: rgba(248, 250, 252, 0.5) !important;
+
+  /* Specific micro accents */
+  html.light .bg-indigo-900\/20 {
+    background-color: rgba(37, 99, 235, 0.08) !important;
   }
-  html.light .border-slate-900\/80,
+
+  /* Rich Light Status boxes with high quality color indicators */
+  html.light .bg-amber-500\/10,
+  html.light .bg-amber-600\/10 {
+    background-color: #fffbeb !important; /* Amber-50 */
+    border-color: #fde68a !important;   /* Amber-200 */
+    color: #b45309 !important;          /* Amber-700 */
+  }
+  html.light .bg-emerald-500\/10,
+  html.light .bg-emerald-600\/10 {
+    background-color: #f0fdf4 !important; /* Emerald-50 */
+    border-color: #bbf7d0 !important;   /* Emerald-200 */
+    color: #15803d !important;          /* Emerald-700 */
+  }
+  html.light .bg-rose-500\/10,
+  html.light .bg-rose-600\/10 {
+    background-color: #fff1f2 !important; /* Rose-50 */
+    border-color: #fecdd3 !important;   /* Rose-200 */
+    color: #be123c !important;          /* Rose-700 */
+  }
+  html.light .bg-indigo-505\/20,
+  html.light .bg-indigo-600\/25,
+  html.light .bg-indigo-600\/20,
+  html.light .bg-indigo-500\/10 {
+    background-color: #f5f3ff !important; /* Indigo-50 */
+    border-color: #ddd6fe !important;   /* Indigo-200 */
+    color: #4338ca !important;          /* Indigo-700 */
+  }
+
+  /* Comprehensive Border adaptation to standard grey boundaries */
   html.light .border-slate-800,
   html.light .border-slate-900,
+  html.light .border-slate-800\/85,
+  html.light .border-slate-800\/65,
+  html.light .border-slate-800\/60,
+  html.light .border-slate-800\/25,
+  html.light .border-slate-900\/60,
+  html.light .border-slate-900\/80,
   html.light .border-indigo-950\/40,
-  html.light .border-[#151c2c]\/80 {
+  html.light .border-indigo-950\/60,
+  html.light .border-indigo-900\/40,
+  html.light .border-indigo-900\/50,
+  html.light .border-\[\#151c2c\]\/80,
+  html.light .border-\[\#1c2a4c\]\/50,
+  html.light .border-\[\#1c2a4c\]\/30,
+  html.light .divide-slate-800,
+  html.light .divide-slate-800\/60,
+  html.light .divide-[#151c2c],
+  html.light .border-indigo-950/70 {
     border-color: #e2e8f0 !important;
   }
+
+  /* Ensure text selections stand out nicely */
+  html.light ::selection {
+    background-color: rgba(37, 99, 235, 0.15) !important;
+    color: #2563eb !important;
+  }
+
+  /* Text & Typography Contrast Overrides for Perfect Legibility */
   html.light .text-slate-100 {
     color: #0f172a !important;
   }
@@ -51,15 +184,64 @@
   html.light .text-slate-500 {
     color: #64748b !important;
   }
-  html.light .text-white {
+  html.light .text-slate-600 {
+    color: #475569 !important;
+  }
+
+  /* Text colors for primary states - upgrade bright colors to deep rich shades with stellar contrast */
+  html.light .text-indigo-400 {
+    color: #2563eb !important; /* Sapphire Blue-600 */
+  }
+  html.light .text-indigo-300 {
+    color: #1d4ed8 !important; /* Sapphire Blue-700 */
+  }
+  html.light .text-indigo-200 {
+    color: #1e3a8a !important; /* Indigo-900 */
+  }
+  html.light .text-violet-400 {
+    color: #7c3aed !important; /* Violet-600 */
+  }
+  html.light .text-amber-400 {
+    color: #b45309 !important; /* Amber-700, high contrast */
+  }
+  html.light .text-emerald-400 {
+    color: #047857 !important; /* Emerald-700, readable status */
+  }
+  html.light .text-rose-400 {
+    color: #be123c !important; /* Rose-700, perfect contrast */
+  }
+  html.light .text-cyan-400 {
+    color: #0369a1 !important; /* Cyan-700 */
+  }
+
+  /* Intelligent text-white mapping: 
+     Turns text-white into dark slate, EXCEPT on dark solid status badges or components (like buttons, indigo labels, etc.) */
+  html.light .text-white:not(
+    .bg-indigo-600 *, .bg-indigo-600, 
+    .bg-indigo-700 *, .bg-indigo-700, 
+    .bg-indigo-500 *, .bg-indigo-505,
+    .bg-emerald-600 *, .bg-emerald-600, 
+    .bg-emerald-700 *, .bg-emerald-700,
+    .bg-rose-600 *, .bg-rose-600, 
+    .bg-rose-500 *, .bg-rose-500,
+    .bg-violet-600 *, .bg-violet-605,
+    .from-indigo-600 *, .from-indigo-505 *,
+    .to-violet-500 *, .to-indigo-400 *,
+    .to-indigo-500 *,
+    button, button *, [role="button"], [role="button"] *
+  ) {
     color: #0f172a !important;
   }
+
+  /* Header gradients conversion to beautiful solid corporate colors */
   html.light .text-transparent.bg-clip-text.bg-gradient-to-r {
     background: none !important;
     background-clip: unset !important;
     -webkit-background-clip: unset !important;
     color: #1e3a8a !important;
   }
+
+  /* Forms & Interactive controls */
   html.light input,
   html.light select,
   html.light textarea {
@@ -67,6 +249,19 @@
     color: #0f172a !important;
     border-color: #cbd5e1 !important;
   }
+  html.light input::placeholder,
+  html.light textarea::placeholder {
+    color: #94a3b8 !important;
+  }
+  html.light input:focus,
+  html.light select:focus,
+  html.light textarea:focus {
+    border-color: #2563eb !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1) !important;
+  }
+
+  /* Tables adjustments with high-contrast header blocks and clean paddings */
   html.light tr {
     background-color: #ffffff !important;
     color: #0f172a !important;
@@ -83,9 +278,24 @@
     color: #334155 !important;
     border-color: #e2e8f0 !important;
   }
-  html.light aside {
-    background-color: #ffffff !important;
+  html.light td {
     border-color: #e2e8f0 !important;
+  }
+
+  /* Modal body specific fix for confirmation alerts */
+  html.light #confirm-modal-box {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  }
+  html.light #btn-cancel {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+    border-color: #cbd5e1 !important;
+  }
+  html.light #btn-cancel:hover {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
   }
 }
 

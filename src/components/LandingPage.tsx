@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { locales } from '../locales';
+import { FyComptaLogo } from './FyComptaLogo';
 import { 
   TrendingUp, 
   CheckCircle, 
@@ -28,7 +29,9 @@ import {
   DollarSign, 
   Users,
   CreditCard,
-  BellRing
+  BellRing,
+  RotateCcw,
+  BarChart4
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -42,6 +45,68 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [appsDropdownOpen, setAppsDropdownOpen] = useState(false);
 
+  // Live Interactive Dashboard Mockup states
+  const [allocationMethod, setAllocationMethod] = useState<'direct' | 'step'>('step');
+  const [assemblyCost, setAssemblyCost] = useState(55000);
+  const [maintenanceCost, setMaintenanceCost] = useState(48000);
+  const [energyCost, setEnergyCost] = useState(46900);
+  const [adminCost, setAdminCost] = useState(24000);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
+
+  // Chat/AI Copilot states
+  const [chatMessages, setChatMessages] = useState<Array<{ sender: 'ai' | 'user'; text: string }>>([
+    {
+      sender: 'ai',
+      text: state.language === 'ar' 
+        ? "مرحباً بك! أنا مساعد التكاليف الذكي لمنصة FyCompta. لقد قمت بتحليل تفاصيل اليومية المحاسبية ومراكز التكلفة بمصنعكم تلقائياً. يمكنك الضغط على الأسئلة المقترحة أو سؤالي مباشرة عن نسب الهدر وطرق خفض التكلفة المحددة لـ Alloy Valve X-2."
+        : "Welcome! I am FyCompta's smart cost assistant. I have automatically analyzed your factory's ledger entries and cost centers. Click on any prompt below or ask me about raw material waste and savings."
+    }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+  const handlePromptClick = (promptText: string) => {
+    // Prevent double submissions while typing
+    if (isTyping) return;
+    setChatMessages(prev => [...prev, { sender: 'user', text: promptText }]);
+    setIsTyping(true);
+
+    setTimeout(() => {
+      let reply = '';
+      if (promptText.includes('نصائح') || promptText.includes('tips') || promptText.includes('conseils') || promptText.includes('هدر')) {
+        reply = state.language === 'ar'
+          ? "بناءً على المعطيات والتحليلات الحالية لمصنع FyCompta، إليك 3 إجراءات فورية للتنفيذ:\n\n1. **معالجة تباين المواد الخام**: تم رصد فائض هدر في ورشة التركيب بمعدل 2.8% وهو ما يتجاوز المعيار (1.5%). يُوصى بالتحقق من معايرة آلات التشغيل ومراكز التدفق.\n2. **توزيع أعباء الصيانة**: إعادة التوزيع التنازلي لورشة الصيانة يوضح أن 12% من الوقت المستهلك يذهب للورشة الثانوية دون تحميل مباشر.\n3. **تحسين هامش المساهمة**: يبلغ هامش الربح الإجمالي الحالي 31.5%؛ برفع استخدام مجمع الطاقة بنسبة 5%، يمكن خفض التكلفة بمقدار 240,000 دج شهرياً."
+          : "Based on FyCompta's active calculations, here are 3 instant measures:\n\n1. **Waste Control**: A raw material variance of 2.8% is detected in the assembly workshop (benchmark is 1.5%).\n2. **Stepdown Correction**: Changing from direct to step-down secondary allocation reveals 12% secondary distortion.\n3. **Contribution Margin**: Raising total power production utilization by 5% will reduce unabsorbed fixed overheads by 240,000 DZD.";
+      } else if (promptText.includes('Alloy') || promptText.includes('هوامش') || promptText.includes('marge') || promptText.includes('صمامات') || promptText.includes('الربح')) {
+        reply = state.language === 'ar'
+          ? "التحليل المالي لربحية منتج Alloy Valve X-2 بمصنعكم:\n- **سعر التكلفة الإجمالي (Coût de Revient)**: 4,500 دج للوحدة.\n- **نسبة المواد الأولية واليد العاملة المباشرة**: 58%.\n- **أعباء الورش المشتركة المحملة**: 24%.\n- **الهامش الإجمالي**: 31.5%.\n- **التوجيه**: تفعيل خيار 'التوزيع التنازلي' يمنح دقة محاسبية قدرها 98.4% لقرارات التصدير والتسعير وتجنب الأخطاء الورقية."
+          : "Financial analysis for Alloy Valve X-2:\n- **Full Cost Price**: 4,500 DZD per unit.\n- **Direct Elements (Material + Labor)**: 58%.\n- **Absorbed Indirect Overhead**: 24%.\n- **Gross Margin**: 31.5%.\n- **Guidance**: Activating Step-down allocation optimizes export price modeling up to 98.4% accuracy.";
+      } else {
+        reply = state.language === 'ar'
+          ? "تحليل شامل لمراكز التكلفة غير المباشرة لورش المصنع من FyCompta:\n1. **مجمع الطاقة والكهرباء**: يمتص العبء الأكبر بنسبة 28% من التكاليف غير المباشرة.\n2. **ورشة صيانة الآلات**: تساهم بـ 18%.\n3. **توصية المحاكي**: اعتماد طريقة التوزيع التنازلي يفرز دقة مذهلة ويعالج تشوهات الطريقة المباشرة الكلاسيكية بمعدل 4.2% لصالح هوامش الأقسام الإنتاجية."
+          : "Indirect Cost Centre analysis:\n1. **Energy & Power Center**: Absorbs the largest chunk (28% of indirect loads).\n2. **Machine Maintenance**: Accounts for 18%.\n3. **Recommendation**: Step-down secondary allocation corrects direct method deviations by 4.2% across primary production lines.";
+      }
+      setChatMessages(prev => [...prev, { sender: 'ai', text: reply }]);
+      setIsTyping(false);
+    }, 850);
+  };
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    const txt = chatInput;
+    setChatInput('');
+    handlePromptClick(txt);
+  };
+
+  const handleResetSimulator = () => {
+    setAssemblyCost(55000);
+    setMaintenanceCost(48000);
+    setEnergyCost(46900);
+    setAdminCost(24000);
+    setAllocationMethod('step');
+  };
+
   // For multi-step onboarding state
   const [formProfile, setFormProfile] = useState({
     fullName: '',
@@ -51,9 +116,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
   });
   const [formCompany, setFormCompany] = useState({
     companyName: '',
-    sector: 'المحاسبة التحليلية',
-    employees: '11-50'
+    sector: '',
+    employees: '11-50',
+    customSector: ''
   });
+  const [formErrors, setFormErrors] = useState<{ companyName?: string; sector?: string; customSector?: string }>({});
   const [paymentOption, setPaymentOption] = useState('bank');
 
   const t = locales[state.language];
@@ -71,6 +138,34 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
   };
 
   const handleNextStep = () => {
+    if (onboardingStep === 2) {
+      const errors: { companyName?: string; sector?: string; customSector?: string } = {};
+      
+      if (!formCompany.companyName.trim()) {
+        errors.companyName = state.language === 'ar' 
+          ? 'يرجى إدخال اسم المؤسسة' 
+          : 'Veuillez saisir le nom de l\'entreprise';
+      }
+      
+      if (!formCompany.sector) {
+        errors.sector = state.language === 'ar' 
+          ? 'يرجى اختيار قطاع النشاط' 
+          : 'Veuillez choisir un secteur d\'activité';
+      }
+      
+      if (formCompany.sector === 'أخرى / Autres' && !formCompany.customSector.trim()) {
+        errors.customSector = state.language === 'ar' 
+          ? 'يرجى تحديد النشاط بالتفصيل' 
+          : 'Veuillez préciser votre activité';
+      }
+      
+      if (Object.keys(errors).length > 0) {
+        setFormErrors(errors);
+        return;
+      }
+    }
+
+    setFormErrors({});
     if (onboardingStep < 4) {
       setOnboardingStep(onboardingStep + 1);
     } else {
@@ -88,55 +183,55 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
   // Translations dictionary for Landing Page elements
   const ls: Record<string, any> = {
     ar: {
-      tagline: "منصة سحابية مدعمة بالذكاء الاصطناعي لإدارة محاسبة التكاليف وتحليل الأداء المالي ودعم اتخاذ القرار داخل المؤسسات الصناعية",
-      subTagline: "نظام رقمي وطني مبسط لحساب التكلفة المعيارية، إهلاك أعباء TRCI، تحليل هدر المواد، وتقييم مؤشرات الربحية خطوة بخطوة بدلالة نظام SCF الجزائري.",
-      ctaDemo: "طلب عرض توضيحي",
-      ctaTrial: "جرب مجاناً - 14 يوم مجانية",
+      tagline: "منصة سحابية مدعمة بالذكاء الاصطناعي لإدارة محاسبة التكاليف وتحليل الأداء المالي ودعم اتخاذ القرار للمؤسسات الصناعية",
+      subTagline: "أتمتة العمليات بواسطة FyCompta والتكامل مع المساعد الذكي لتوزيع التكاليف و لمراقبة هوامش لأرباح تحليل هدر المواد ودعم الإدارة المالية خطوة بخطوة بدلالة نظام SCF الجزائري",
+      ctaDemo: "احجز جلسة عرض مخصصة للمنشأة",
+      ctaTrial: "ابدأ نسخة التجربة المجانية للبرنامج",
       ctaLearn: "اكتشف المزيد",
       socialCompanies: "500+ مؤسسة جزائرية",
       socialAvailability: "99.9% جاهزية النظام",
       socialScf: "متوافق كلياً مع نظام SCF",
-      probTitle: "لماذا تفقد الشركات الصناعية ربحيتها؟",
-      probSub: "دراسة استقصائية لأكبر عوائق تضخم تكاليف المواد الأولية والتتبع الضعيف لأعباء الورش التوزيعية.",
-      probCard: "المشاكل الحالية في المصانع",
-      solCard: "حلول FyCompta الذكية",
-      prob1: "تأخر متكرر في حساب سعر التكلفة النهائي (غالباً نهاية الشهر).",
-      prob2: "توزيع تقديري وعشوائي للمصاريف غير المباشرة (TRCI).",
-      prob3: "عدم تتبع الهدر الصناعي وخسائر المواد الأولية أثناء التشغيل.",
-      prob4: "عجز عن قياس المساهمة التحليلية الفعلية لكل منتج.",
-      sol1: "حساب فوري مباشر ومحاكاة لأسعار التكاليف في ثوانٍ.",
-      sol2: "توزيع رياضي دقيق للأعباء الثانوية والأساسية في جدول TRCI المدمج.",
-      sol3: "رادار هدر ذكي يحسب ويقيس كلفة المنتج الفاقد وتأثيره على الهامش.",
-      sol4: "لوحة تحكم تفصيلية تفصل المنتجات الأعلى ربحية والمنتجات الخاسرة.",
-      sol5: "توقعات أوتوماتيكية وتنبيهات طارئة مدعومة بالذكاء الاصطناعي لتفادي العجز.",
-      featTitle: "كل ما تحتاجه منشأتك الصناعية للرقابة المالية",
+      probTitle: "محاسبة التكاليف لا يجب أن تعتمد على جداول أوراق Excel الهشة واليدوية",
+      probSub: "دراسة استقصائية لأكبر عوائق تضخم تكاليف المواد الأولية والتتبع الضعيف لأعباء الورش التوزيعية والتعقيدات التشغيلية التقليدية.",
+      probCard: "المشاكل والتعقيدات التشغيلية التقليدية (Legacy Operational Bottlenecks)",
+      solCard: "حلول FyCompta الذكية للمنشآت (Modern Automated Allocations)",
+      prob1: "الاعتماد الكامل على جداول أوراق Excel الهشة والمعرضة للخطأ اليدوي.",
+      prob2: "الغموض والتقدير العشوائي في توزيع التكاليف المشتركة والمصاريف غير المباشرة.",
+      prob3: "الغياب التام لأي رادار لتتبع هدر وخسائر المواد الأولية أثناء خطوط التشغيل.",
+      prob4: "شلل في حساب سعر التكلفة الفعلي والمتوسط المرجح (CUMP) لكل منتج نهائي.",
+      sol1: "ربط رقمي للواردات يغني تماماً عن أوراق وجداول الإدخال اليدوي القابلة للتلف.",
+      sol2: "توزيع رياضي دقيق للأعباء بالطريقة المباشرة والتنازلية (Step-down & Direct).",
+      sol3: "رادار ذكي وفوري يسلط الضوء على هوامش الفائد ومواقع الهدر لكل ورشة صناعية.",
+      sol4: "بناء أسعار تكلفة دقيقة لجميع المنتجات والصناعات (CUMP / Coût Price).",
+      sol5: "مساعد محاسبي ذكي (AI Copilot) ومستشار متعدد اللغات يدعم رصد وتحليل الانحرافات.",
+      featTitle: "حلول صممت لإيجاد وإصلاح الهدر المالي وتحسين الربحية",
       featSub: "مجموعة مدمجة من الأدوات المالية المصممة خصيصاً لتلبية متطلبات بيئة الإنتاج الجزائرية والشرق أوسطية.",
       feat1: "المحاسبة التحليلية الذكية",
-      feat1_d: "تتبع تلقائي ودورات تكلفة كاملة من المادة الأولية إلى النتيجة التحليلية الصافية.",
+      feat1_d: "توزيع متسق وفوري لجميع التكاليف الثابتة والمتغيرة لكل قسم وورشة داخل مصنعك.",
       feat2: "حساب CUMP تلقائي ومباشر",
-      feat2_d: "تكامل مباشر بين فواتير الشراء، بطاقات الجرد، ومخزون آخر الفترة لحساب التكلفة الوسطية المرجحة.",
-      feat3: "رادار الهدر والفاقد",
-      feat3_d: "كشف فوري لمعدلات التلف الفني للتشغيل وحساب الكلفة الحقيقية للمخلفات الصناعية.",
-      feat4: "تحليل الانحرافات والتباين",
-      feat4_d: "مقارنة حية لأسعار التكلفة الفعلية المحسوبة مقابل الأهداف المعيارية المرصودة.",
-      feat5: "مساعد محاسبة ذكي (AI)",
-      feat5_d: "روبوت حواري متكامل يحلل هيكل الأعباء ويقترح سيناريوهات بديلة لترشيد الإنفاق.",
-      feat6: "توقعات مالية ديناميكية",
-      feat6_d: "تحليل الحساسية لفهم تأثير رفع أسعار المازوت، اللوجستيات أو أجور اليد العاملة على هامش الأرباح.",
+      feat2_d: "حساب دائم لمتوسط تكلفة التصنيع المرجح تلقائياً عند استلام أي كميات أو مواد خام جديدة لتفادي فروقات الجرد والأسعار.",
+      feat3: "رادار الهدر والفواقد",
+      feat3_d: "يقارن الاستهلاك الفعلي للموارد والمواد بالكميات المعيارية للورود لتقارير فورية عن أي انحراف في التصنيع.",
+      feat4: "توقعات مالية ديناميكية (AI)",
+      feat4_d: "استخدم الذكاء الاصطناعي للتنبؤ بتقلبات أسعار شراء الطاقة والمواد الخام والتناسب في مستلزمات الإنتاج القادمة.",
+      feat5: "تحليل الانحرافات والتباين للمخازن",
+      feat5_d: "مراقبة متكاملة لمدى تطابق تكلفة الإنتاج المتوقعة بالفعلي المسجل لتصحيح مواضع الخلل على الفور.",
+      feat6: "مساعد محاسبي قوي مدعوم بالذكاء الاصطناعي",
+      feat6_d: "مساعد محاسبة متكامل يسرد تقارير التكاليف، ويشرح المعادلات المالية للمديرين التشغيليين بدون تعقيد.",
       flowTitle: "سلسلة التدفق الأوتوماتيكي للبيانات",
       flowSub: "كيف تتدفق مدخلاتك المحاسبية لتشكل النتيجة المالية الصافية للمؤسسة دون تكرار إدخال.",
       flowStep1: "جدول TRCI والمصاريف",
       flowStep2: "تكلفة الشراء والجرد",
       flowStep3: "تكلفة الإنتاج للورشات",
       flowStep4: "النتيجة والتحليل الإحصائي",
-      pricingTitle: "اختر خطة الاشتراك المناسبة لمؤسستك",
+      pricingTitle: "باقات اشتراكات مرنة تناسب حجم وتطور أعمالك",
       pricingSub: "تراخيص سنوية شفافة تدعم بيئة عمل سحابية آمنة مع دعم فني متكامل.",
-      priceStarterName: "المؤسسات الناشئة والصغيرة",
-      priceStarterSub: "تحسين مبيعات ومخزون منشأة واحدة بجرد مبسط.",
-      priceProName: "المؤسسات المتوسطة",
-      priceProSub: "أكثر الخطط شعبية للمصانع والورشات ذات خطوط الإنتاج المتعددة.",
-      priceEnterpriseName: "المؤسسات الكبيرة",
-      priceEnterpriseSub: "حلول مخصصة بالكامل مع خوادم معزولة وتكامل مع الأنظمة القديمة.",
+      priceStarterName: "المؤسسات الناشئة والصغيرة (باقة المبتدئين)",
+      priceStarterSub: "المثالية للمؤسسات والشركات الصناعية الصغيرة التي ترغب في أتمتة الدفتر المحاسبي وتجريب توزيع التكاليف.",
+      priceProName: "المؤسسات المتوسطة (باقة المحترفين)",
+      priceProSub: "مصممة لمصانع الإنتاج المتنامية لتوزيع التكاليف بشكل تنازلي مستمر.",
+      priceEnterpriseName: "المؤسسات الكبيرة (الباقة المتمثلة)",
+      priceEnterpriseSub: "ربط متكامل للشركات ذات الفروع المتعددة والمصانع المتكاملة مع حوسبة مخصصة.",
       onboardingTitle: "مرحباً بك في عالم الإدارة الذكية",
       onboardingSub: "أكمل الخطوات التالية لتخصيص نسختك المجانية من FyCompta.",
       step1Title: "الملف الشخصي",
@@ -161,8 +256,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       btnLaunch: "الدخول إلى لوحة التحكم والتحليل المالي"
     },
     fr: {
-      tagline: "Transformez vos données comptables en intelligence de gestion",
-      subTagline: "La plateforme n°1 en Algérie pour l'analyse des coûts standards, l'imputation analytique TRCI, et le suivi en temps réel de la rentabilité de vos ateliers.",
+      tagline: "Une plateforme cloud propulsée par l'IA pour la gestion de la comptabilité analytique, l'analyse des performances financières et l'aide à la décision pour les entreprises industrielles",
+      subTagline: "Automatisation des processus par FyCompta et intégration avec l'assistant intelligent pour la répartition des coûts, le suivi des marges bénéficiaires, l'analyse du gaspillage des matières et le support de la gestion financière étape par étape selon le système SCF algérien",
       ctaDemo: "Demander une démonstration",
       ctaTrial: "Essai gratuit 14 jours",
       ctaLearn: "En savoir plus",
@@ -234,8 +329,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       btnLaunch: "Lancer le tableau de bord"
     },
     en: {
-      tagline: "Transform your accounting data into executive decisions",
-      subTagline: "The #1 industrial platform in Algeria for standard costing, indirect TRCI material allocation, scrap radar monitoring, and product group profit analysis.",
+      tagline: "An AI-powered cloud platform for cost accounting management, financial performance analysis, and decision support for industrial enterprises",
+      subTagline: "Process automation by FyCompta and integration with the smart assistant for cost distribution, profit margin monitoring, material waste analysis, and step-by-step financial management support aligned with the Algerian SCF system",
       ctaDemo: "Request a Demo",
       ctaTrial: "14-Day Free Trial",
       ctaLearn: "Learn More",
@@ -318,8 +413,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
         <div className="flex items-center gap-6">
           {/* Logo & Brand */}
           <div className="flex items-center gap-2.5 cursor-pointer" onClick={onEnterERP}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-700 to-indigo-805 flex items-center justify-center text-white shadow shadow-indigo-500/25">
-              <Layers className="w-5.5 h-5.5" />
+            <div className="w-10 h-10 rounded-xl bg-slate-950 flex items-center justify-center text-white shadow shadow-slate-900/10">
+              <FyComptaLogo size={34} />
             </div>
             <div>
               <span className="text-lg font-black tracking-wide text-slate-900 flex items-center gap-1.5 font-sans">
@@ -393,13 +488,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
           <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[10.5px]">
             <button 
               onClick={() => updateState({ language: 'ar' })} 
-              className={`px-1.5 py-1 rounded font-black ${state.language === 'ar' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600'}`}
+              className={`px-1.5 py-1 rounded font-black ${state.language === 'ar' ? 'bg-[#396ef6] text-white shadow-sm' : 'text-slate-600'}`}
             >
               عربي
             </button>
             <button 
               onClick={() => updateState({ language: 'fr' })} 
-              className={`px-1.5 py-1 rounded font-black ${state.language === 'fr' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600'}`}
+              className={`px-1.5 py-1 rounded font-black ${state.language === 'fr' ? 'bg-[#396ef6] text-white shadow-sm' : 'text-slate-600'}`}
             >
               FR
             </button>
@@ -414,7 +509,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
 
           <button
             onClick={startOnboarding}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black px-4 py-2.5 rounded-xl transition-all shadow-md shadow-indigo-600/15 cursor-pointer hover:scale-[1.02]"
+            className="bg-[#3979f6] hover:bg-blue-700 text-white text-xs font-black px-4 py-2.5 rounded-xl transition-all shadow-md shadow-indigo-600/15 cursor-pointer hover:scale-[1.02] border border-[#ffffff]"
           >
             {l.ctaTrial}
           </button>
@@ -422,120 +517,51 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       </nav>
 
       {/* 2. Hero Section (Professional Dark Blue Odoo/Oracle Background) */}
-      <section className="bg-slate-900 text-white py-16 md:py-24 relative overflow-hidden">
+      <section className="bg-[#0b1329] text-white py-16 md:py-24 relative overflow-hidden">
         {/* Abstract background grids */}
-        <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-25"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] opacity-25 ml-0 pl-0 pr-0 mr-0 mt-0"></div>
         
-        <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className={`max-w-4xl mx-auto px-4 md:px-8 relative z-10 flex flex-col ${isRtl ? 'items-end text-right' : 'items-start text-left'}`}>
           
-          {/* Left Text details */}
-          <div className="lg:col-span-5 space-y-6 text-center lg:text-right" style={{ textAlign: isRtl ? 'right' : 'left' }}>
-            <div className="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/20 px-3.5 py-1 rounded-full text-indigo-400 text-xs font-black">
-              <Sparkles className="w-4 h-4 animate-spin-slow duration-1000" />
-              <span>{state.language === 'ar' ? 'نظام المحاسبة التحليلية المطور للجزائر' : 'Analytic Platform for Algerian Manufacturers'}</span>
+          {/* Typography & Action Buttons */}
+          <div className="space-y-6 w-full flex flex-col" style={{ textAlign: isRtl ? 'right' : 'left', alignItems: isRtl ? 'flex-end' : 'flex-start' }}>
+            <div 
+              className="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/20 px-3.5 py-1.5 rounded-full text-blue-400 text-xs font-black pt-[6px]"
+              style={{ marginLeft: '300px' }}
+            >
+              <Sparkles className="w-4 h-4 animate-spin-slow duration-1000 shrink-0" />
+              <span>
+                {state.language === 'ar' 
+                  ? 'نظام المحاسبة التحليلية المطور للجزائر' 
+                  : state.language === 'fr' 
+                    ? 'Système de Comptabilité Analytique pour l\'Algérie' 
+                    : 'Analytical Costing System for Algeria'}
+              </span>
             </div>
             
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black leading-[1.2] text-white tracking-tight">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black leading-[1.3] text-white tracking-tight w-full mt-0 pt-0 pb-0" style={{ color: '#f0f3fc', textAlign: 'center' }}>
               {l.tagline}
             </h1>
             
-            <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-xl">
+            <p className="text-slate-300 text-xs md:text-sm leading-relaxed max-w-xl w-full mb-6" style={{ color: '#a1a8b1', textAlign: 'center', marginLeft: '117px' }}>
               {l.subTagline}
             </p>
 
-            <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+            <div className={`flex flex-wrap gap-3 w-full pt-0 ${isRtl ? 'justify-end' : 'justify-start'}`} style={{ marginLeft: '200px' }}>
               <button
                 onClick={startOnboarding}
-                className="bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs px-6 py-3.5 rounded-xl transition-all shadow-lg hover:scale-[1.02] cursor-pointer"
+                className="bg-blue-600 hover:bg-blue-505 text-white font-black text-xs px-6 py-3.5 rounded-xl transition-all shadow-lg hover:scale-[1.02] cursor-pointer"
               >
                 {l.ctaTrial}
               </button>
               <button
                 onClick={onEnterERP}
-                className="bg-slate-800 hover:bg-slate-755 border border-slate-700 text-slate-100 font-bold text-xs px-5 py-3.5 rounded-xl transition-all hover:text-white"
+                className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 font-bold text-xs px-5 py-3.5 rounded-xl transition-all hover:text-white"
+                style={{ color: '#afb3bc' }}
               >
                 {l.ctaDemo}
               </button>
             </div>
-          </div>
-
-          {/* Right illustration of Dark-mode Dynamic Dashboard displaying real-time calculations */}
-          <div className="lg:col-span-7">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              className="bg-[#090d16] border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-60 h-60 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-              
-              {/* Dashboard inner header simulating real calculation node */}
-              <div className="border-b border-indigo-950/40 pb-4 flex justify-between items-center text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse" />
-                  <span className="font-mono text-slate-400">ANAC_PILOT_NODE_KPI</span>
-                </div>
-                <span className="font-bold text-slate-500 bg-slate-950 border border-slate-900 rounded px-2 py-0.5">ADMIN SANDBOX</span>
-              </div>
-
-              {/* Grid showcasing 3 Industrial KPIs: Marge, CA, Taux de gaspillage */}
-              <div className="grid grid-cols-3 gap-3.5 mt-5">
-                <div className="bg-slate-950 border border-slate-900 rounded-2xl p-4 text-center">
-                  <span className="text-[9.5px] uppercase text-slate-500 tracking-wider block font-bold">
-                    {state.language === 'ar' ? 'هامش الربح الافتراضي' : 'Marge de démonstration'}
-                  </span>
-                  <div className="text-sm md:text-lg font-black text-emerald-400 font-mono mt-1 flex items-center justify-center gap-1">
-                    <TrendingUp className="w-3.5 h-3.5" />
-                    <span>+24.5%</span>
-                  </div>
-                </div>
-
-                <div className="bg-slate-950 border border-slate-900 rounded-2xl p-4 text-center">
-                  <span className="text-[9.5px] uppercase text-slate-500 tracking-wider block font-bold">
-                    {state.language === 'ar' ? 'رقم أعمال توضيحي' : "Chiffre d'affaires démo"}
-                  </span>
-                  <div className="text-sm md:text-lg font-black text-white font-mono mt-1">
-                    12,850,000 <span className="text-[9px] text-slate-500">DA</span>
-                  </div>
-                </div>
-
-                <div className="bg-slate-950 border border-slate-900 rounded-2xl p-4 text-center">
-                  <span className="text-[9.5px] uppercase text-slate-500 tracking-wider block font-bold">
-                    {state.language === 'ar' ? 'معدل هدر نموذجي' : 'Taux de gaspillage type'}
-                  </span>
-                  <div className="text-sm md:text-lg font-black text-amber-500 font-mono mt-1 flex items-center justify-center gap-1">
-                    <Activity className="w-3.5 h-3.5" />
-                    <span>3.2%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Dynamic Line/Chart visualizer mockup */}
-              <div className="bg-slate-950 border border-slate-900 rounded-2xl p-4 mt-4 space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] text-slate-400 font-black tracking-wider uppercase">{state.language === 'ar' ? 'منظومة حساب تكلفة الشراء والصيانة' : 'Unit Cost Variance Tracker'}</span>
-                  <span className="text-[9px] text-teal-400 font-mono">OK / SCF COMPLIANT</span>
-                </div>
-                
-                {/* Visual bar graph representation */}
-                <div className="space-y-2 pt-1.5">
-                  {[
-                    { label: state.language === 'ar' ? 'عجينة البلاستيك PVC' : 'PVC Resin Material', val: '68%', col: 'bg-amber-500' },
-                    { label: state.language === 'ar' ? 'أكياس التغليف الورقية' : 'Kraft Packing Bags', val: '40%', col: 'bg-indigo-500' },
-                    { label: state.language === 'ar' ? 'مصاريف النقل واللوجستيات' : 'Direct Transport Overhead', val: '88%', col: 'bg-rose-400' }
-                  ].map((row, i) => (
-                    <div key={i} className="text-[10.5px] space-y-1 font-mono">
-                      <div className="flex justify-between items-center text-slate-350">
-                        <span>{row.label}</span>
-                        <span>{row.val}</span>
-                      </div>
-                      <div className="w-full bg-[#111827] h-1.5 rounded-full overflow-hidden">
-                        <div style={{ width: row.val }} className={`h-full ${row.col}`} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
           </div>
 
         </div>
@@ -569,6 +595,413 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
             </div>
 
           </div>
+        </div>
+      </section>
+
+      {/* 2.5 Interactive Embedded Live Dashboard Section (Sample View) */}
+      <section className="py-20 bg-slate-900 border-b border-slate-950 relative overflow-hidden">
+        {/* Decorative ambient rays */}
+        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-60" />
+
+        <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-12 relative z-10">
+          
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <div className="inline-flex items-center gap-1.5 bg-blue-500/15 border border-blue-500/20 px-3.5 py-1.5 rounded-full text-blue-400 text-xs font-black">
+              <Sparkles className="w-4 h-4 text-blue-400" />
+              <span>{state.language === 'ar' ? 'نموذج محاكاة القيادة بدقة عالية' : 'High-Fidelity Simulation Sandbox'}</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black text-white leading-tight" style={{ color: '#d7dbe4' }}>
+              {state.language === 'ar' ? 'لوحة القيادة والمحاكاة التحليلية المباشرة' : 'Live Analytical Dashboard & Simulation'}
+            </h2>
+            <p className="text-slate-400 text-sm leading-relaxed max-w-2xl mx-auto" style={{ color: '#a1a8b1' }}>
+              {state.language === 'ar' 
+                ? 'قاعدة تتبع وحوسبة التكاليف الصناعية غير المباشرة وتعديل الأسعار التنازلية بالوقت الفعلي لمصنعكم.'
+                : 'Track and absorb indirect industrial overheads and simulate real-time cascade allocations.'}
+            </p>
+          </div>
+
+          {/* Core Simulator Card Container */}
+          <div className="bg-[#070b14] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl" />
+
+            {/* Dashboard Mockup Top Bar */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-800/80 text-xs text-slate-400">
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl text-emerald-400 font-extrabold shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>{state.language === 'ar' ? 'نشط الموزع المالي بدقة' : 'Active: Cost Ratio Allocator'}</span>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-slate-450 font-black tracking-wider uppercase text-[10px]">
+                  SOC2 Certified
+                </div>
+              </div>
+
+              <button 
+                onClick={handleResetSimulator}
+                className="bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-200 hover:text-white font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2 cursor-pointer duration-200"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-blue-400 animate-spin-slow" />
+                <span>{state.language === 'ar' ? 'إعادة تعيين القيم الأصلية' : 'Reset Default Values'}</span>
+              </button>
+            </div>
+
+            {/* Metrics Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Card 1 */}
+              <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all duration-300 relative group">
+                <div className="flex justify-between items-start">
+                  <span className="text-xs text-slate-400 font-bold leading-relaxed">
+                    {state.language === 'ar' ? 'هامش الربح الإجمالي للمصنع (الافتراضي)' : 'Factory Gross Margin (Default)'}
+                  </span>
+                  <div className="p-1 px-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black text-[10px] flex items-center gap-1 shadow-sm font-mono shrink-0">
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    <span>+24.5%</span>
+                  </div>
+                </div>
+                <div className="text-3xl font-black text-white font-mono mt-3">
+                  31.5%
+                </div>
+                <span className="text-[10px] text-slate-500 font-bold block mt-1.5 uppercase tracking-wider">
+                  {state.language === 'ar' ? 'نشط - التوزيع التنازلي دقيق' : 'Active - Precise stepdown'}
+                </span>
+              </div>
+
+              {/* Card 2 */}
+              <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all duration-300 relative group">
+                <div className="flex justify-between items-start">
+                  <span className="text-xs text-slate-400 font-bold leading-relaxed">
+                    {state.language === 'ar' ? 'رقم أعمال المنشأة الإجمالي Q2' : 'Aggregated Total Revenue Q2'}
+                  </span>
+                  <span className="text-[9.5px] text-blue-400 font-mono font-black bg-blue-950/45 px-2 py-1 rounded-md border border-blue-900/30 shrink-0">
+                    Q2 REVENUE
+                  </span>
+                </div>
+                <div className="text-3xl font-black text-blue-400 font-mono mt-3">
+                  1,450,000 <span className="text-xs font-sans text-slate-500">{state.language === 'ar' ? 'دج' : 'DZD'}</span>
+                </div>
+                <span className="text-[10px] text-slate-500 font-bold block mt-1.5 uppercase tracking-wider">
+                  {state.language === 'ar' ? 'مجموع الربع الثاني الموحد' : 'Aggregated cumulative sum'}
+                </span>
+              </div>
+
+              {/* Card 3 */}
+              <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all duration-300 relative group">
+                <div className="flex justify-between items-start">
+                  <span className="text-xs text-slate-400 font-bold leading-relaxed">
+                    {state.language === 'ar' ? 'معدل تشغيل وهدر نموذجي' : 'Standard Scrap & Waste Rate'}
+                  </span>
+                  <span className="p-1 px-2 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 font-mono text-[9px] font-black shrink-0">
+                    OPTIMIZED
+                  </span>
+                </div>
+                <div className="text-3xl font-black text-rose-500 font-mono mt-3">
+                  2.8%
+                </div>
+                <span className="text-[10px] text-slate-500 font-bold block mt-1.5 uppercase tracking-wider">
+                  {state.language === 'ar' ? 'تحت المستويات المعيارية المقبولة' : 'Below maximum limit threshold'}
+                </span>
+              </div>
+            </div>
+
+            {/* Deep Dive Interactive Simulator Area */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
+              
+              {/* Cost allocation with interactive Sliders (Colspan 7) */}
+              <div className="lg:col-span-7 bg-[#040811] border border-slate-850 rounded-2xl p-5 md:p-6 space-y-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div>
+                    <h3 className="text-sm md:text-base font-black text-white" style={{ color: '#c0c6d5' }}>
+                      {state.language === 'ar' ? 'محرك توزيع التكلفة والخدمات المتبادلة' : 'Cost Allocation & Cascading Overheads'}
+                    </h3>
+                    <p className="text-[10.5px] text-slate-400" style={{ color: '#c0c6d5' }}>
+                      {state.language === 'ar' ? 'اضبط أوزان نفقات الورش وشاهد إعادة هيكلة وتحميل الأعباء بالجدول فورا.' : 'Slide to change basic workshop costs and witness cascade allocation ratios recalculate.'}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-[10.5px] self-end sm:self-auto shrink-0">
+                    <button 
+                      onClick={() => setAllocationMethod('direct')}
+                      className={`px-3 py-1.5 rounded-lg font-black transition-all cursor-pointer ${allocationMethod === 'direct' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                    >
+                      {state.language === 'ar' ? 'الطريقة المباشرة' : 'Direct Method'}
+                    </button>
+                    <button 
+                      onClick={() => setAllocationMethod('step')}
+                      className={`px-3 py-1.5 rounded-lg font-black transition-all cursor-pointer ${allocationMethod === 'step' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                    >
+                      {state.language === 'ar' ? 'طريقة التوزيع التنازلي' : 'Step-down Method'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Sliders Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Slider 1 */}
+                  <div className="space-y-1.5 bg-slate-950/70 p-3.5 rounded-xl border border-slate-900">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-slate-350 font-bold">{state.language === 'ar' ? 'ورشة التركيب والتجميع' : 'Assembly & Prep line'}</span>
+                      <span className="font-mono text-blue-400 font-extrabold">{assemblyCost.toLocaleString()} {state.language === 'ar' ? 'دج' : 'DA'}</span>
+                    </div>
+                    <input 
+                      type="range"
+                      min="10000"
+                      max="150000"
+                      step="1000"
+                      value={assemblyCost}
+                      onChange={(e) => setAssemblyCost(Number(e.target.value))}
+                      className="w-full accent-blue-500 bg-slate-900 h-1 rounded appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Slider 2 */}
+                  <div className="space-y-1.5 bg-slate-950/70 p-3.5 rounded-xl border border-slate-900">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-slate-350 font-bold">{state.language === 'ar' ? 'ورشة صيانة الآلات' : 'Maintenance Team'}</span>
+                      <span className="font-mono text-blue-400 font-extrabold">{maintenanceCost.toLocaleString()} {state.language === 'ar' ? 'دج' : 'DA'}</span>
+                    </div>
+                    <input 
+                      type="range"
+                      min="10000"
+                      max="150000"
+                      step="1000"
+                      value={maintenanceCost}
+                      onChange={(e) => setMaintenanceCost(Number(e.target.value))}
+                      className="w-full accent-blue-500 bg-slate-900 h-1 rounded appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Slider 3 */}
+                  <div className="space-y-1.5 bg-slate-950/70 p-3.5 rounded-xl border border-slate-900">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-slate-350 font-bold">{state.language === 'ar' ? 'مجمع الطاقة والكهرباء' : 'Energy & Power Center'}</span>
+                      <span className="font-mono text-blue-400 font-extrabold">{energyCost.toLocaleString()} {state.language === 'ar' ? 'دج' : 'DA'}</span>
+                    </div>
+                    <input 
+                      type="range"
+                      min="10000"
+                      max="150000"
+                      step="1000"
+                      value={energyCost}
+                      onChange={(e) => setEnergyCost(Number(e.target.value))}
+                      className="w-full accent-blue-500 bg-slate-900 h-1 rounded appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Slider 4 */}
+                  <div className="space-y-1.5 bg-slate-950/70 p-3.5 rounded-xl border border-slate-900">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-slate-350 font-bold">{state.language === 'ar' ? 'إدارة وموظفي المصنع' : 'Plant Logistics & Admin'}</span>
+                      <span className="font-mono text-blue-400 font-extrabold">{adminCost.toLocaleString()} {state.language === 'ar' ? 'دج' : 'DA'}</span>
+                    </div>
+                    <input 
+                      type="range"
+                      min="10000"
+                      max="150000"
+                      step="1000"
+                      value={adminCost}
+                      onChange={(e) => setAdminCost(Number(e.target.value))}
+                      className="w-full accent-blue-500 bg-slate-900 h-1 rounded appearance-none cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                {/* Segmented bar graph mockup */}
+                <div className="bg-slate-950/50 p-4 border border-slate-900 rounded-2xl space-y-4">
+                  <div className="flex items-center gap-2">
+                    <BarChart4 className="w-4 h-4 text-blue-400" />
+                    <span className="text-[10px] font-black text-slate-400 tracking-wider block uppercase">
+                      {state.language === 'ar' ? 'حركة التكاليف المشتركة الممتصة للورش بعد التخصيص غير المباشر' : 'Tracing Indirect Absorbances across Primary Workshops'}
+                    </span>
+                  </div>
+
+                  <div className="space-y-4 pt-1">
+                    {[
+                      { 
+                        name_ar: 'ورشة التركيب والتجميع', 
+                        name_en: 'Assembly & Prep', 
+                        direct: assemblyCost, 
+                        allocated: allocationMethod === 'direct' ? assemblyCost * 0.35 : assemblyCost * 0.58 
+                      },
+                      { 
+                        name_ar: 'ورشة صيانة الآلات', 
+                        name_en: 'Machine Maintenance', 
+                        direct: maintenanceCost, 
+                        allocated: allocationMethod === 'direct' ? maintenanceCost * 0.28 : maintenanceCost * 0.44 
+                      },
+                      { 
+                        name_ar: 'مجمع الطاقة والكهرباء', 
+                        name_en: 'Energy & Power Hub', 
+                        direct: energyCost, 
+                        allocated: allocationMethod === 'direct' ? energyCost * 0.15 : energyCost * 0.35 
+                      },
+                      { 
+                        name_ar: 'إدارة وموظفي المصنع', 
+                        name_en: 'Factory Admin Division', 
+                        direct: adminCost, 
+                        allocated: allocationMethod === 'direct' ? adminCost * 0.05 : adminCost * 0.15 
+                      }
+                    ].map((item, id) => {
+                      const displayLabel = state.language === 'ar' ? item.name_ar : item.name_en;
+                      const sum = item.direct + item.allocated;
+                      const cap = 250000;
+                      const dPercent = Math.min(100, (item.direct / cap) * 100);
+                      const iPercent = Math.min(100, (item.allocated / cap) * 100);
+
+                      return (
+                        <div key={id} className="space-y-1 text-xs">
+                          <div className="flex justify-between items-center text-[11px]">
+                            <span className="text-slate-300 font-bold">{displayLabel}</span>
+                            <span className="font-mono text-slate-400">
+                              {state.language === 'ar' ? 'المجموع المحمل:' : 'Allocated Sum:'}{' '}
+                              <span className="text-white font-black">{Math.round(sum).toLocaleString()} دج</span>
+                            </span>
+                          </div>
+
+                          <div className="space-y-1">
+                            {/* Direct cost (blue) */}
+                            <div className="flex items-center gap-2">
+                              <span className="w-14 text-[8.5px] text-slate-500 font-mono tracking-widest uppercase">DIRECT</span>
+                              <div className="flex-1 bg-slate-900 h-2 rounded-full overflow-hidden">
+                                <div style={{ width: `${dPercent}%` }} className="bg-blue-600 h-full rounded transition-all duration-300" />
+                              </div>
+                              <span className="w-14 font-mono text-[9.5px] text-right text-blue-400 font-extrabold">{Math.round(item.direct).toLocaleString()}</span>
+                            </div>
+
+                            {/* Indirect cost (purple) */}
+                            <div className="flex items-center gap-2">
+                              <span className="w-14 text-[8.5px] text-slate-500 font-mono tracking-widest uppercase">ABSORBED</span>
+                              <div className="flex-1 bg-slate-900 h-2 rounded-full overflow-hidden">
+                                <div style={{ width: `${iPercent}%` }} className="bg-purple-500 h-full rounded transition-all duration-300" />
+                              </div>
+                              <span className="w-14 font-mono text-[9.5px] text-right text-purple-400 font-extrabold">{Math.round(item.allocated).toLocaleString()}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Legend bar */}
+                  <div className="flex items-center justify-center gap-6 pt-3 border-t border-slate-900 text-[10px] text-slate-400">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded bg-blue-600" />
+                      <span>{state.language === 'ar' ? 'أعباء إنتاج مباشرة' : 'Direct Production Loads'}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded bg-purple-500" />
+                      <span>{state.language === 'ar' ? 'أعباء ثانوية موزعة (TRCI)' : 'Absorbed Indirect Overheads'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI Copilot chat simulator (Colspan 5) */}
+              <div className="lg:col-span-5 bg-[#040811] border border-slate-850 rounded-2xl p-5 md:p-6 flex flex-col h-[520px]">
+                
+                {/* Header info */}
+                <div className="pb-3.5 border-b border-slate-900 flex justify-between items-center text-xs">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7.5 h-7.5 bg-blue-500/10 border border-blue-500/25 rounded-md flex items-center justify-center text-blue-400">
+                      <Sparkles className="w-4 h-4 animate-pulse" />
+                    </div>
+                    <div>
+                      <h4 className="font-black text-slate-100" style={{ color: '#dae0ed' }}>{state.language === 'ar' ? 'تحليلات واستفسارات التدقيق الفورية' : 'Instant Audit AI Consultant'}</h4>
+                      <div className="flex items-center gap-1 text-[9.5px] text-emerald-400 font-bold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>STANDBY ONLINE</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Messages pane */}
+                <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1 scrollbar-thin scrollbar-thumb-slate-800">
+                  {chatMessages.map((msg, index) => (
+                    <div 
+                      key={index} 
+                      className={`flex gap-2 max-w-[85%] ${msg.sender === 'user' ? 'ms-auto flex-row-reverse' : 'me-auto text-slate-200'}`}
+                    >
+                      {msg.sender === 'ai' && (
+                        <div className="w-6 h-6 rounded bg-blue-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                          Fy
+                        </div>
+                      )}
+                      <div 
+                        className={`p-3 rounded-2xl text-xs leading-relaxed whitespace-pre-line ${msg.sender === 'user' ? 'bg-blue-600 text-white rounded-tr-none shadow-md' : 'bg-slate-950 border border-slate-900 text-slate-250 rounded-tl-none font-semibold'}`}
+                        style={index === 0 ? { color: '#c9d1de' } : undefined}
+                      >
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))}
+
+                  {isTyping && (
+                    <div className="flex gap-2 max-w-[85%] me-auto">
+                      <div className="w-6 h-6 rounded bg-blue-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                        Fy
+                      </div>
+                      <div className="p-3 bg-slate-950 border border-slate-900 rounded-2xl rounded-tl-none text-slate-550 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Recommendation prompt chips */}
+                <div className="space-y-2 pb-3">
+                  <span className="text-[9.5px] uppercase font-bold text-slate-500 block">
+                    {state.language === 'ar' ? 'استفسارات محاسبية مقترحة:' : 'Recommended finance prompts:'}
+                  </span>
+                  <div className="flex flex-col gap-2">
+                    <button 
+                      type="button"
+                      onClick={() => handlePromptClick(state.language === 'ar' ? 'أبرز لنا 3 نصائح فورية لخفض التكاليف وعلاج الهدر بمصنعنا' : 'Give us 3 immediate cost-savings & waste optimization tips')}
+                      className="bg-slate-950 hover:bg-slate-900 border border-slate-900 text-slate-350 hover:text-white px-3 py-2 text-right rounded-xl text-[10.5px] font-bold transition-all shadow-sm"
+                      style={{ color: '#e9ebf1' }}
+                    >
+                      {state.language === 'ar' ? '💡 خفض التكاليف وضبط نسب الهدر' : '💡 Review factory waste optimization'}
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => handlePromptClick(state.language === 'ar' ? 'حلل هوامش أرباح صمامات صنف Alloy Valve X-2 وكلفة الورشة' : 'Analyze gross margins for Alloy Valve X-2 production')}
+                      className="bg-slate-950 hover:bg-slate-900 border border-slate-900 text-slate-350 hover:text-white px-3 py-2 text-right rounded-xl text-[10.5px] font-bold transition-all shadow-sm"
+                      style={{ color: '#e7ebee' }}
+                    >
+                      {state.language === 'ar' ? '⚙️ تحليل التكلفة الموزعة لـ Alloy Valve X-2' : '⚙️ Calculate pricing for Alloy Valve X-2'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Chat direct submission form */}
+                <form onSubmit={handleSendMessage} className="flex gap-2">
+                  <input 
+                    type="text"
+                    disabled={isTyping}
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    placeholder={state.language === 'ar' ? 'اكتب تساؤلاً مالياً حول مصنعكم هنا...' : 'Ask about ledger elements or CUMP...'}
+                    className="flex-1 bg-slate-950 border border-slate-900 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-40"
+                  />
+                  <button 
+                    type="submit"
+                    disabled={isTyping || !chatInput.trim()}
+                    className="bg-blue-600 hover:bg-blue-505 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:scale-100 active:scale-95 text-white font-black px-4 py-2.5 rounded-xl transition-all text-xs cursor-pointer font-sans shrink-0"
+                  >
+                    {state.language === 'ar' ? 'إرسال' : 'Send'}
+                  </button>
+                </form>
+
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
       </section>
 
@@ -606,14 +1039,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
             {/* Blue Card: Solutions FyCompta */}
             <motion.div 
               whileHover={{ y: -4 }}
-              className="bg-indigo-50/40 border border-indigo-200/80 rounded-3xl p-6 md:p-8 space-y-6 shadow-md relative overflow-hidden"
+              className="bg-blue-50/40 border border-blue-200/80 rounded-3xl p-6 md:p-8 space-y-6 shadow-md relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-400/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/10 rounded-full blur-2xl pointer-events-none" />
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-indigo-100/80 text-indigo-700 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-blue-100/80 text-blue-700 flex items-center justify-center">
                   <CheckCircle className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-black text-indigo-950">{state.language === 'ar' ? 'حلول FyCompta الذكية' : 'Solutions FyCompta'}</h3>
+                <h3 className="text-lg font-black text-slate-900">{state.language === 'ar' ? 'حلول FyCompta الذكية' : 'Solutions FyCompta'}</h3>
               </div>
 
               <ul className="space-y-4 relative z-10">
@@ -623,10 +1056,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                     <li 
                       key={index} 
                       className={`flex gap-3 items-start text-xs md:text-sm leading-relaxed ${
-                        isSpecialIA ? 'text-indigo-950 font-black' : 'text-slate-800 font-semibold'
+                        isSpecialIA ? 'text-slate-950 font-black' : 'text-slate-800 font-semibold'
                       }`}
                     >
-                      <Sparkles className={`w-4 h-4 shrink-0 mt-1 ${isSpecialIA ? 'text-amber-500 animate-pulse' : 'text-indigo-600'}`} />
+                      <Sparkles className={`w-4 h-4 shrink-0 mt-1 ${isSpecialIA ? 'text-amber-500 animate-pulse' : 'text-blue-600'}`} />
                       <span>{point}</span>
                     </li>
                   );
@@ -651,7 +1084,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
             
             {/* Feature 1: Analytique */}
             <div className="bg-slate-50 hover:bg-[#fafafa] border border-slate-200/80 rounded-2xl p-6 transition-all shadow-sm space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-705 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
                 <Calculator className="w-5.5 h-5.5" />
               </div>
               <h3 className="text-sm font-black text-slate-900">{l.feat1}</h3>
@@ -660,7 +1093,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
 
             {/* Feature 2: CUMP */}
             <div className="bg-slate-50 hover:bg-[#fafafa] border border-slate-200/80 rounded-2xl p-6 transition-all shadow-sm space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-705 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
                 <Box className="w-5.5 h-5.5" />
               </div>
               <h3 className="text-sm font-black text-slate-900">{l.feat2}</h3>
@@ -669,7 +1102,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
 
             {/* Feature 3: Radar Rebut */}
             <div className="bg-slate-50 hover:bg-[#fafafa] border border-slate-200/80 rounded-2xl p-6 transition-all shadow-sm space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-705 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
                 <Flame className="w-5.5 h-5.5 text-amber-500" />
               </div>
               <h3 className="text-sm font-black text-slate-900">{l.feat3}</h3>
@@ -678,8 +1111,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
 
             {/* Feature 4: Variance */}
             <div className="bg-slate-50 hover:bg-[#fafafa] border border-slate-200/80 rounded-2xl p-6 transition-all shadow-sm space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-705 flex items-center justify-center">
-                <Target className="w-5.5 h-5.5 src-emerald-500" />
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+                <Target className="w-5.5 h-5.5 text-emerald-500" />
               </div>
               <h3 className="text-sm font-black text-slate-900">{l.feat4}</h3>
               <p className="text-xs text-slate-500 leading-relaxed font-semibold">{l.feat4_d}</p>
@@ -687,8 +1120,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
 
             {/* Feature 5: AI Consult */}
             <div className="bg-slate-50 hover:bg-[#fafafa] border border-slate-200/80 rounded-2xl p-6 transition-all shadow-sm space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-705 flex items-center justify-center">
-                <Sparkles className="w-5.5 h-5.5 text-indigo-650" />
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+                <Sparkles className="w-5.5 h-5.5 text-blue-600" />
               </div>
               <h3 className="text-sm font-black text-slate-900">{l.feat5}</h3>
               <p className="text-xs text-slate-500 leading-relaxed font-semibold">{l.feat5_d}</p>
@@ -696,7 +1129,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
 
             {/* Feature 6: Dynamic forecasts */}
             <div className="bg-slate-50 hover:bg-[#fafafa] border border-slate-200/80 rounded-2xl p-6 transition-all shadow-sm space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-705 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
                 <Activity className="w-5.5 h-5.5 text-blue-500" />
               </div>
               <h3 className="text-sm font-black text-slate-900">{l.feat6}</h3>
@@ -714,8 +1147,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
         
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-12 relative z-10">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-2xl md:text-3xl font-black text-white tracking-wide">{l.flowTitle}</h2>
-            <p className="text-slate-400 text-xs md:text-sm font-semibold leading-relaxed">{l.flowSub}</p>
+            <h2 className="text-2xl md:text-3xl font-black text-white tracking-wide" style={{ color: '#d7dbff' }}>{l.flowTitle}</h2>
+            <p className="text-slate-400 text-xs md:text-sm font-semibold leading-relaxed" style={{ color: '#a1a8b1' }}>{l.flowSub}</p>
           </div>
 
           {/* Illuminated chain link */}
@@ -729,12 +1162,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
               { title: l.flowStep4, label: state.language === 'ar' ? 'تحقيق الأثر الصافي' : 'Synthèse finale', col: 'border-rose-500 text-rose-400', desc: state.language === 'ar' ? 'نقل النتائج أوتوماتيكياً لحساب النتيجة التحليلي العام.' : 'Compiling margin analysis spreadsheets.' }
             ].map((node, index) => (
               <div key={index} className="bg-[#090d16] border border-slate-800 rounded-2xl p-5 text-center relative z-10 space-y-3 shadow-xl">
-                <span className="text-[9.5px] uppercase text-slate-500 tracking-wider block font-black">{node.label}</span>
+                <span className="text-[9.5px] uppercase text-slate-500 tracking-wider block font-black" style={{ color: '#e1e7f1' }}>{node.label}</span>
                 <div className="w-11 h-11 rounded-full bg-slate-950 border-2 border-dashed flex items-center justify-center text-sm font-black mx-auto shadow-inner" style={{ borderColor: node.col.split(' ')[0] }}>
                   <Cpu className="w-5 h-5" />
                 </div>
-                <h4 className="text-sm font-black text-slate-100">{node.title}</h4>
-                <p className="text-[11px] text-slate-400 leading-relaxed">{node.desc}</p>
+                <h4 className="text-sm font-black text-slate-100" style={{ color: '#525c74' }}>{node.title}</h4>
+                <p className="text-[11px] text-slate-400 leading-relaxed" style={{ color: '#dce2ea' }}>{node.desc}</p>
               </div>
             ))}
           </div>
@@ -745,9 +1178,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
       <section id="pricing" className="py-20 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-12">
           
-          <div className="text-center max-w-2xl mx-auto space-y-3">
+          <div className="text-center max-w-2xl mx-auto space-y-4">
             <h2 className="text-2xl md:text-3xl font-black text-slate-950 tracking-wide">{l.pricingTitle}</h2>
-            <p className="text-slate-650 text-xs md:text-sm font-semibold leading-relaxed">{l.pricingSub}</p>
+            <p className="text-slate-600 text-xs md:text-sm font-semibold leading-relaxed">{l.pricingSub}</p>
+
+            {/* Billing Switcher Trigger */}
+            <div className="inline-flex items-center gap-3 bg-white p-2 border border-slate-200 rounded-2xl shadow-sm justify-center mt-2">
+              <span className={`text-xs font-bold transition-all ${billingCycle === 'monthly' ? 'text-slate-900' : 'text-slate-400'}`}>
+                {state.language === 'ar' ? 'فوترة شهرية' : 'Billing Monthly'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+                className="w-12 h-6.5 rounded-full bg-slate-100 border border-slate-300 p-1 flex items-center transition-all focus:outline-none cursor-pointer"
+              >
+                <div
+                  className={`w-4.5 h-4.5 rounded-full bg-blue-600 transition-all duration-300 shadow ${billingCycle === 'yearly' ? (isRtl ? 'translate-x-0' : 'translate-x-[22px]') : (isRtl ? 'translate-x-[22px]' : 'translate-x-0')}`}
+                />
+              </button>
+              <span className={`text-xs font-black flex items-center gap-1.5 transition-all ${billingCycle === 'yearly' ? 'text-blue-600 font-extrabold' : 'text-slate-400'}`}>
+                <span>{state.language === 'ar' ? 'فوترة سنوية' : 'Billing Yearly'}</span>
+                <span className="bg-blue-100 text-blue-700 text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold">
+                  {state.language === 'ar' ? 'توفير 20%' : 'Save 20%'}
+                </span>
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-6">
@@ -755,103 +1210,125 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
             {/* Starter tier */}
             <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 space-y-6 shadow-md relative overflow-hidden flex flex-col justify-between">
               <div className="space-y-4">
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Starter</span>
+                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Starter Pack</span>
                 <h3 className="text-lg font-black text-slate-900">{l.priceStarterName}</h3>
-                <p className="text-xs text-slate-500 font-semibold">{l.priceStarterSub}</p>
-                <div className="pt-2">
-                  <span className="text-3xl font-black text-slate-900">30,000</span>
-                  <span className="text-sm font-bold text-slate-500"> DZD / {state.language === 'ar' ? 'سنة' : 'an'}</span>
+                <p className="text-xs text-slate-500 font-semibold leading-relaxed">{l.priceStarterSub}</p>
+                <div className="pt-2 flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-slate-900">
+                    {billingCycle === 'yearly' ? '30,000' : '3,000'}
+                  </span>
+                  <span className="text-xs font-bold text-slate-500">
+                    {' '}{state.language === 'ar' ? 'دج' : 'DZD'} / {billingCycle === 'yearly' ? (state.language === 'ar' ? 'سنة' : 'year') : (state.language === 'ar' ? 'شهر' : 'month')}
+                  </span>
                 </div>
                 
                 <ul className="space-y-3 pt-4 border-t border-slate-100 text-xs text-slate-600 font-semibold">
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-indigo-600 shrink-0" />
-                    <span>{state.language === 'ar' ? 'تتبع 1 منتج مع 3 مواد أولية' : '1 finished product with 3 materials'}</span>
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'رفع ومطابقة القيود بالملفات الذكية' : 'Upload ledger and match layout accounts'}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-indigo-600 shrink-0" />
-                    <span>{state.language === 'ar' ? 'جدول توزيع TRCI مبسط' : 'Simplified TRCI workshop allocation'}</span>
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'تفعيل 14 يوماً من المساعد الذكي' : '14-Day assistant trial license'}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-indigo-600 shrink-0" />
-                    <span>{state.language === 'ar' ? 'تفعيل 14 يوماً من المساعد الذكي' : '14-day free trial on AI consultant'}</span>
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'الطريقة المباشرة لتوزيع التكاليف' : 'Direct analytical allocation method only'}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'استخراج التقارير وجداول الإدارة بصيغة Excel' : 'Export standard sheets & reports to Excel'}</span>
                   </li>
                 </ul>
               </div>
 
               <button
                 onClick={startOnboarding}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs py-3 rounded-xl transition-all shadow mt-6 cursor-pointer"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-xs py-3.5 rounded-xl transition-all shadow mt-6 cursor-pointer hover:scale-[1.01]"
               >
                 {state.language === 'ar' ? 'ابدأ كـ تجربة مجانية' : 'Commencer l\'essai gratuit'}
               </button>
             </div>
 
-            {/* Pro tier */}
-            <div className="bg-white border-2 border-indigo-650 rounded-3xl p-6 md:p-8 space-y-6 shadow-xl relative overflow-hidden flex flex-col justify-between transform scale-[1.02]">
-              <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[9px] font-black px-3.5 py-1.5 rounded-bl-xl uppercase tracking-widest">{state.language === 'ar' ? 'الأكثر طلباً' : 'Recommandé'}</div>
+            {/* Pro tier (Highlighted/Best Choice) */}
+            <div className="bg-white border-2 border-blue-600 rounded-3xl p-6 md:p-8 space-y-6 shadow-xl relative overflow-hidden flex flex-col justify-between transform scale-[1.02]">
+              <div className="absolute top-0 right-0 bg-blue-600 text-white text-[9px] font-black px-3.5 py-1.5 rounded-bl-xl uppercase tracking-widest">
+                {state.language === 'ar' ? 'الأكثر طلباً' : 'Best Choice'}
+              </div>
               
               <div className="space-y-4">
-                <span className="text-[10px] uppercase font-bold text-indigo-600 tracking-wider block">Pro Plan</span>
-                <h3 className="text-lg font-black text-indigo-950">{l.priceProName}</h3>
-                <p className="text-xs text-indigo-505/85 text-slate-550 font-semibold">{l.priceProSub}</p>
+                <span className="text-[10px] uppercase font-bold text-blue-650 tracking-wider block font-black text-blue-600 font-sans">Pro Plan</span>
+                <h3 className="text-lg font-black text-slate-900">{l.priceProName}</h3>
+                <p className="text-xs text-slate-500 font-semibold leading-relaxed">{l.priceProSub}</p>
                 <div className="pt-2">
-                  <span className="text-3xl font-black text-indigo-900">Sur Devis / بطلب سعر</span>
+                  <span className="text-3xl font-black text-blue-600">
+                    {state.language === 'ar' ? 'طلب السعر (Sur Devis)' : 'Sur Devis (Quotations)'}
+                  </span>
                 </div>
                 
-                <ul className="space-y-3 pt-4 border-t border-indigo-100 text-xs text-slate-850 font-semibold">
+                <ul className="space-y-3 pt-4 border-t border-blue-100 text-xs text-slate-700 font-semibold">
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-indigo-650 shrink-0" />
-                    <span>{state.language === 'ar' ? 'عدد غير محدود من المنتجات والورشات' : 'Unlimited products & custom workshops'}</span>
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'توزيع التكاليف المشتركة بالطريقة التنازلية (Stepdown)' : 'Cascade step-down analytical overhead allocations'}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-indigo-650 shrink-0" />
-                    <span>{state.language === 'ar' ? 'رادار هدر ذكي ونسب تلقائية' : 'Interactive scrap rates with manual adjust'}</span>
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'مساعد ذكي متكامل بدون حدود (AI Copilot)' : 'Unlimited AI assistant ledger chat & advice'}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-indigo-650 shrink-0" />
-                    <span>{state.language === 'ar' ? 'وصول دائم ودعم غير محدود من المساعد المالي' : 'Full access to AI accounts adviser'}</span>
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'حساب سعر التكلفة ومتوسط CUMP لجميع المنتجات' : 'Full cost price and automated CUMP value tracking'}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'تتبع انحرافات أسعار الخامات مع رادار الهدر' : 'Inventory standard variance track & waste radar'}</span>
                   </li>
                 </ul>
               </div>
 
               <button
                 onClick={startOnboarding}
-                className="w-full bg-indigo-600 hover:bg-indigo-550 text-white font-black text-xs py-3.5 rounded-xl transition-all shadow-md mt-6 cursor-pointer"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-xs py-3.5 rounded-xl transition-all shadow-md mt-6 cursor-pointer hover:scale-[1.01]"
               >
-                {state.language === 'ar' ? 'طلب تفاصيل العرض' : 'Contacter les ventes'}
+                {state.language === 'ar' ? 'طلب السعر المخصص للمؤسسة' : 'Contacter les ventes'}
               </button>
             </div>
 
             {/* Enterprise tier */}
-            <div className="bg-white border border-slate-205 rounded-3xl p-6 md:p-8 space-y-6 shadow-md relative overflow-hidden flex flex-col justify-between">
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 space-y-6 shadow-md relative overflow-hidden flex flex-col justify-between">
               <div className="space-y-4">
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Enterprise</span>
+                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block font-black font-sans">Enterprise Plan</span>
                 <h3 className="text-lg font-black text-slate-900">{l.priceEnterpriseName}</h3>
-                <p className="text-xs text-slate-500 font-semibold">{l.priceEnterpriseSub}</p>
+                <p className="text-xs text-slate-500 font-semibold leading-relaxed">{l.priceEnterpriseSub}</p>
                 <div className="pt-2">
-                  <span className="text-3xl font-black text-slate-900">Sur Devis / عرض مخصص</span>
+                  <span className="text-3xl font-black text-slate-900">
+                    {state.language === 'ar' ? 'طلب السعر (Sur Devis)' : 'Sur Devis (Enterprise)'}
+                  </span>
                 </div>
                 
                 <ul className="space-y-3 pt-4 border-t border-slate-100 text-xs text-slate-600 font-semibold">
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-indigo-605 text-indigo-500 shrink-0" />
-                    <span>{state.language === 'ar' ? 'تكامل تام مع أنظمة SAP, Oracle' : 'Oracle & SAP data synchronizer pipelines'}</span>
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'تكامل آلي ومباشر مع أنظمة SAP, Oracle, Sylob, Sage' : 'Native API links for Sage, SAP, Sylob & Oracle data'}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-indigo-605 text-indigo-500 shrink-0" />
-                    <span>{state.language === 'ar' ? 'خوادم مخصصة ذات حماية فائقة' : 'Private hosted database constraints'}</span>
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'خوادم محاسبية مخصصة للمنشأة (On-Premises / Dedicated Cloud)' : 'On premises high-guaranteed or dedicated hosting'}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-indigo-605 text-indigo-500 shrink-0" />
-                    <span>{state.language === 'ar' ? 'دعم هاتفي مباشر ومرافقة محاسبية' : 'Dedicated accounts support advisor'}</span>
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'حساب فوري متقاطع ومعقد للتكاليف المتعددة للفروع' : 'Cross-border entity analytical consolidation'}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span>{state.language === 'ar' ? 'اتفاقية مستوى الخدمة والإنتاجية العالية (SLA 99.99%)' : 'Premium SLA backing and system availability'}</span>
                   </li>
                 </ul>
               </div>
 
               <button
                 onClick={startOnboarding}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-black text-xs py-3 rounded-xl transition-all shadow mt-6 cursor-pointer"
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-black text-xs py-3.5 rounded-xl transition-all shadow mt-6 cursor-pointer hover:scale-[1.01]"
               >
                 {state.language === 'ar' ? 'اتصل بفرق المبيعات' : 'Contacter les ventes'}
               </button>
@@ -875,8 +1352,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
               {/* Modal Core header with Horizontal Step indicator */}
               <div className="p-5 border-b border-slate-100 bg-slate-50">
                 <div className="flex justify-between items-center pb-3">
-                  <h3 className="text-sm font-black text-slate-900 flex items-center gap-1.5">
-                    <Sparkles className="w-4.5 h-4.5 text-indigo-600" />
+                  <h3 className="text-sm font-black text-slate-900 flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-slate-950 flex items-center justify-center text-white shrink-0 shadow-sm shadow-slate-900/10">
+                      <FyComptaLogo size={24} />
+                    </div>
                     <span>{l.onboardingTitle}</span>
                   </h3>
                   <button 
@@ -897,14 +1376,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                       <div key={sNum} className="flex flex-col items-center flex-1 relative">
                         {/* Connecting Line */}
                         {sIndex > 0 && (
-                          <div className={`absolute top-[13.5px] w-full right-1/2 h-0.5 ${onboardingStep >= sNum ? 'bg-indigo-600' : 'bg-slate-200'}`} />
+                          <div className={`absolute top-[13.5px] w-full right-1/2 h-0.5 ${onboardingStep >= sNum ? 'bg-blue-600' : 'bg-slate-200'}`} />
                         )}
                         <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center text-[11px] font-black pointer-events-none relative z-10 transition-all ${
-                          isPassed ? 'bg-indigo-600 border-indigo-600 text-white' : (isActive ? 'bg-white border-indigo-600 text-indigo-700' : 'bg-white border-slate-200 text-slate-400')
+                          isPassed ? 'bg-blue-600 border-blue-600 text-white' : (isActive ? 'bg-white border-blue-600 text-blue-700' : 'bg-white border-slate-200 text-slate-400')
                         }`}>
                           {isPassed ? "✓" : sNum}
                         </div>
-                        <span className={`text-[9px] mt-1 font-sans ${isActive ? 'text-indigo-650 font-black' : 'text-slate-400'}`}>{stepName}</span>
+                        <span className={`text-[9px] mt-1 font-sans ${isActive ? 'text-blue-600 font-black' : 'text-slate-400'}`}>{stepName}</span>
                       </div>
                     );
                   })}
@@ -917,7 +1396,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                 {/* Step 1: Your Profile */}
                 {onboardingStep === 1 && (
                   <div className="space-y-4">
-                    <h4 className="text-xs font-black uppercase text-indigo-600 tracking-wider">Step 1: {l.step1Title}</h4>
+                    <h4 className="text-xs font-black uppercase text-blue-600 tracking-wider">Step 1: {l.step1Title}</h4>
                     
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-slate-600 block">{l.profileName}</label>
@@ -928,7 +1407,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                           placeholder={state.language === 'ar' ? 'أدخل اسمك الكريم' : 'Ex: Karim Benyahia'}
                           value={formProfile.fullName}
                           onChange={e => setFormProfile({ ...formProfile, fullName: e.target.value })}
-                          className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-9 text-xs font-semibold focus:outline-none focus:border-indigo-500"
+                          className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-9 text-xs font-semibold focus:outline-none focus:border-blue-500"
                         />
                       </div>
                     </div>
@@ -942,7 +1421,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                           placeholder="Ex: company@domain.dz"
                           value={formProfile.email}
                           onChange={e => setFormProfile({ ...formProfile, email: e.target.value })}
-                          className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-9 text-xs font-semibold focus:outline-none focus:border-indigo-500"
+                          className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-9 text-xs font-semibold focus:outline-none focus:border-blue-500"
                         />
                       </div>
                     </div>
@@ -956,7 +1435,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                           placeholder="Ex: +213 (0) 555 12 34 56"
                           value={formProfile.phone}
                           onChange={e => setFormProfile({ ...formProfile, phone: e.target.value })}
-                          className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-9 text-xs font-semibold focus:outline-none focus:border-indigo-500"
+                          className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-9 text-xs font-semibold focus:outline-none focus:border-blue-500"
                         />
                       </div>
                     </div>
@@ -968,7 +1447,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                         placeholder="••••••••"
                         value={formProfile.password}
                         onChange={e => setFormProfile({ ...formProfile, password: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-3 text-xs font-semibold focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-3 text-xs font-semibold focus:outline-none focus:border-blue-500"
                       />
                     </div>
                   </div>
@@ -977,40 +1456,117 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                 {/* Step 2: Your Company */}
                 {onboardingStep === 2 && (
                   <div className="space-y-4">
-                    <h4 className="text-xs font-black uppercase text-indigo-600 tracking-wider">Step 2: {l.step2Title}</h4>
+                    <h4 className="text-xs font-black uppercase text-blue-600 tracking-wider">Step 2: {l.step2Title}</h4>
                     
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">{l.companyName}</label>
-                      <input 
-                        type="text"
-                        placeholder={state.language === 'ar' ? 'أدخل اسم مصنعك أو هيئتك' : 'Ex: Sarl El-Amel Plastique'}
-                        value={formCompany.companyName}
-                        onChange={e => setFormCompany({ ...formCompany, companyName: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-3 text-xs font-semibold focus:outline-none focus:border-indigo-500"
-                      />
+                      <label className="text-xs font-bold text-slate-700 block text-right">
+                        {state.language === 'ar' ? 'اسم المؤسسة / المصنع' : "Nom de l'Entreprise / Usine"} <span className="text-red-500 font-extrabold">*</span>
+                      </label>
+                      <div className="relative">
+                        <Building2 className="w-4 h-4 absolute right-3 top-3 text-slate-400 pointer-events-none" />
+                        <input 
+                          type="text"
+                          placeholder={state.language === 'ar' ? 'أدخل الاسم الرسمي للشركة... (مثال: سبيكة الجزائر للصلب)' : 'Nom de l\'entreprise (Ex: El-Amel Plastique)'}
+                          value={formCompany.companyName}
+                          onChange={e => {
+                            setFormCompany({ ...formCompany, companyName: e.target.value });
+                            if (e.target.value.trim() && formErrors.companyName) {
+                              setFormErrors({ ...formErrors, companyName: undefined });
+                            }
+                          }}
+                          className={`w-full bg-slate-50 border ${
+                            formErrors.companyName ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500' : 'border-slate-200/80 focus:border-blue-500'
+                          } rounded-xl py-2 px-9 text-xs font-semibold focus:outline-none text-right`}
+                          style={{ direction: 'rtl' }}
+                        />
+                      </div>
+                      {formErrors.companyName && (
+                        <span className="text-[10px] text-red-500 font-bold block text-right mt-1">
+                          {formErrors.companyName}
+                        </span>
+                      )}
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">{l.companySector}</label>
+                      <label className="text-xs font-bold text-slate-700 block text-right">
+                        {state.language === 'ar' ? 'قطاع النشاط الرئيسي للمؤسسة' : 'Secteur d\'activité principal'} <span className="text-red-500 font-extrabold">*</span>
+                      </label>
                       <select
                         value={formCompany.sector}
-                        onChange={e => setFormCompany({ ...formCompany, sector: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-3 text-xs font-semibold focus:outline-none focus:border-indigo-500"
+                        onChange={e => {
+                          const val = e.target.value;
+                          setFormCompany({ ...formCompany, sector: val });
+                          if (val && formErrors.sector) {
+                            setFormErrors({ ...formErrors, sector: undefined });
+                          }
+                          if (val !== 'أخرى / Autres' && formErrors.customSector) {
+                            setFormErrors({ ...formErrors, customSector: undefined });
+                          }
+                        }}
+                        className={`w-full bg-slate-50 border ${
+                          formErrors.sector ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500' : 'border-slate-200/80 focus:border-blue-500'
+                        } rounded-xl py-2 px-3 text-xs font-semibold focus:outline-none text-right`}
+                        style={{ direction: 'rtl' }}
                       >
-                        <option value="المحاسبة التحليلية">{state.language === 'ar' ? 'صناعة البلاستيك والبتروكيمياويات' : 'Synthèse Plastique & Chimie'}</option>
-                        <option value="المحاسبة المالية">{state.language === 'ar' ? 'صناعات غذائية وتحويلية' : 'Agroalimentaire & Transformation'}</option>
-                        <option value="المبيعات">{state.language === 'ar' ? 'صناعة النسيج والجلود' : 'Textile & Confection'}</option>
-                        <option value="المخزونات">{state.language === 'ar' ? 'مواد البناء ومقاطع التعدين' : 'Matériaux de Construction'}</option>
-                        <option value="الأخرى">{state.language === 'ar' ? 'قطاع الخدمات اللوجستية والنقل' : 'Prestations logistiques & services'}</option>
+                        <option value="">{state.language === 'ar' ? '-- يرجى اختيار قطاع النشاط --' : '-- Choisir le secteur d\'activité --'}</option>
+                        <option value="الصناعات التحويلية والإنتاج">{state.language === 'ar' ? 'الصناعات التحويلية والإنتاج' : 'Industries manufacturières & Production'}</option>
+                        <option value="الصناعات الغذائية والزراعية">{state.language === 'ar' ? 'الصناعات الغذائية والزراعية' : 'Industries agroalimentaires & Agriculture'}</option>
+                        <option value="صناعة المعادن والصلب والحديد">{state.language === 'ar' ? 'صناعة المعادن والصلب والحديد' : 'Métallurgie, Acier & Fer'}</option>
+                        <option value="صناعة النسيج والملابس والجلود">{state.language === 'ar' ? 'صناعة النسيج والملابس والجلود' : 'Textile, Habillement & Cuir'}</option>
+                        <option value="الخدمات اللوجستية والتوزيع">{state.language === 'ar' ? 'الخدمات اللوجستية والتوزيع' : 'Services logistiques & Distribution'}</option>
+                        <option value="صناعات التكنولوجيا والأجهزة الدقيقة">{state.language === 'ar' ? 'صناعات التكنولوجيا والأجهزة الدقيقة' : 'Technologies & Instruments de précision'}</option>
+                        <option value="أخرى / Autres">أخرى / Autres</option>
                       </select>
+                      {formErrors.sector && (
+                        <span className="text-[10px] text-red-500 font-bold block text-right mt-1">
+                          {formErrors.sector}
+                        </span>
+                      )}
                     </div>
 
+                    {/* Conditional other input field (Reactive Behavior) */}
+                    <AnimatePresence>
+                      {formCompany.sector === 'أخرى / Autres' && (
+                        <motion.div 
+                          initial={{ opacity: 0, height: 0, y: -10 }}
+                          animate={{ opacity: 1, height: 'auto', y: 0 }}
+                          exit={{ opacity: 0, height: 0, y: -10 }}
+                          className="space-y-1 overflow-hidden"
+                        >
+                          <label className="text-xs font-bold text-blue-600 block text-right mt-2">
+                            <span className="text-red-550 font-extrabold text-red-500">*</span> يرجى تحديد النشاط / Veuillez préciser l'activité
+                          </label>
+                          <input 
+                            type="text"
+                            placeholder="أدخل قطاع نشاط مؤسستك هنا... / Ex: Industrie Textile"
+                            value={formCompany.customSector || ''}
+                            onChange={e => {
+                              setFormCompany({ ...formCompany, customSector: e.target.value });
+                              if (e.target.value.trim() && formErrors.customSector) {
+                                setFormErrors({ ...formErrors, customSector: undefined });
+                              }
+                            }}
+                            className={`w-full bg-slate-50 border ${
+                              formErrors.customSector ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500' : 'border-slate-200/80 focus:border-blue-500'
+                            } rounded-xl py-2 px-3 text-xs font-semibold focus:outline-none text-right`}
+                            style={{ direction: 'rtl' }}
+                          />
+                          {formErrors.customSector && (
+                            <span className="text-[10px] text-red-500 font-bold block text-right mt-1">
+                              {formErrors.customSector}
+                            </span>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-600 block">{l.companyEmployees}</label>
+                      <label className="text-xs font-bold text-slate-700 block text-right">{l.companyEmployees}</label>
                       <select
                         value={formCompany.employees}
                         onChange={e => setFormCompany({ ...formCompany, employees: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-3 text-xs font-semibold focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 border border-slate-200/80 rounded-xl py-2 px-3 text-xs font-semibold focus:outline-none text-right"
+                        style={{ direction: 'rtl' }}
                       >
                         <option value="1-10">1 - 10 {state.language === 'ar' ? 'موظفين' : 'salariés'}</option>
                         <option value="11-50">11 - 50 {state.language === 'ar' ? 'موظفين' : 'salariés'}</option>
@@ -1027,7 +1583,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                     <div className="w-14 h-14 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center text-xl mx-auto mb-2 shadow-inner">
                       ✓
                     </div>
-                    <h4 className="text-xs font-black uppercase text-indigo-650 tracking-wider">Step 3: {l.step3Title}</h4>
+                    <h4 className="text-xs font-black uppercase text-blue-600 tracking-wider">Step 3: {l.step3Title}</h4>
                     <h3 className="text-sm font-black text-slate-900">{l.trialHeader}</h3>
                     <p className="text-xs text-slate-500 leading-relaxed font-semibold px-4">
                       {l.trialText}
@@ -1038,21 +1594,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                 {/* Step 4: Payment Confirmation */}
                 {onboardingStep === 4 && (
                   <div className="space-y-5">
-                    <h4 className="text-xs font-black uppercase text-indigo-600 tracking-wider">Step 4: {l.step4Title}</h4>
+                    <h4 className="text-xs font-black uppercase text-blue-600 tracking-wider">Step 4: {l.step4Title}</h4>
                     <p className="text-xs text-slate-600 leading-relaxed font-semibold">
                       {l.paymentText}
                     </p>
 
                     <div className="space-y-3">
                       <label className={`flex gap-3 items-center p-3 rounded-2xl border transition-all cursor-pointer ${
-                        paymentOption === 'bank' ? 'bg-indigo-50/50 border-indigo-600 ring-1 ring-indigo-600' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                        paymentOption === 'bank' ? 'bg-blue-50/50 border-blue-600 ring-1 ring-blue-600' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                       }`}>
                         <input 
                           type="radio" 
                           name="pay" 
                           checked={paymentOption === 'bank'} 
                           onChange={() => setPaymentOption('bank')} 
-                          className="accent-indigo-650"
+                          className="accent-blue-600"
                         />
                         <div className="flex-1 text-right" style={{ textAlign: isRtl ? 'right' : 'left' }}>
                           <span className="text-xs font-bold text-slate-800 block">{l.payBank}</span>
@@ -1061,34 +1617,34 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                       </label>
 
                       <label className={`flex gap-3 items-center p-3 rounded-2xl border transition-all cursor-pointer ${
-                        paymentOption === 'proforma' ? 'bg-indigo-50/50 border-indigo-600 ring-1 ring-indigo-600' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                        paymentOption === 'proforma' ? 'bg-blue-50/50 border-blue-600 ring-1 ring-blue-600' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                       }`}>
                         <input 
                           type="radio" 
                           name="pay" 
                           checked={paymentOption === 'proforma'} 
                           onChange={() => setPaymentOption('proforma')} 
-                          className="accent-indigo-650"
+                          className="accent-blue-600"
                         />
                         <div className="flex-1 text-right" style={{ textAlign: isRtl ? 'right' : 'left' }}>
                           <span className="text-xs font-bold text-slate-800 block">{l.payDoc}</span>
-                          <span className="text-[10px] text-slate-500 font-semibold">{state.language === 'ar' ? 'توليد فاتورة مبدئية مصادق عليها إلكترونياً للإمضاء' : 'Authorized downloadable Quotation pro forma document.'}</span>
+                          <span className="text-[10px] text-slate-400 font-semibold">{state.language === 'ar' ? 'توليد فاتورة مبدئية مصادق عليها إلكترونياً للإمضاء' : 'Authorized downloadable Quotation pro forma document.'}</span>
                         </div>
                       </label>
 
                       <label className={`flex gap-3 items-center p-3 rounded-2xl border transition-all cursor-pointer ${
-                        paymentOption === 'card' ? 'bg-indigo-50/50 border-indigo-600 ring-1 ring-indigo-600' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                        paymentOption === 'card' ? 'bg-blue-50/50 border-blue-600 ring-1 ring-blue-600' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                       }`}>
                         <input 
                           type="radio" 
                           name="pay" 
                           checked={paymentOption === 'card'} 
                           onChange={() => setPaymentOption('card')} 
-                          className="accent-indigo-650"
+                          className="accent-blue-600"
                         />
                         <div className="flex-1 text-right" style={{ textAlign: isRtl ? 'right' : 'left' }}>
                           <span className="text-xs font-bold text-slate-800 block">{l.payCard}</span>
-                          <span className="text-[10px] text-slate-500 font-semibold">{state.language === 'ar' ? 'ربط مباشر مع البطاقة الذهبية لبريد الجزائر وبطاقات CIB البنكية' : 'Algeria Dahabia Card gateway integration.'}</span>
+                          <span className="text-[10px] text-slate-400 font-semibold">{state.language === 'ar' ? 'ربط مباشر مع البطاقة الذهبية لبريد الجزائر وبطاقات CIB البنكية' : 'Algeria Dahabia Card gateway integration.'}</span>
                         </div>
                       </label>
                     </div>
@@ -1100,7 +1656,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
                   {onboardingStep > 1 && onboardingStep < 4 ? (
                     <button
                       onClick={handlePrevStep}
-                      className="bg-slate-105 border border-slate-300 text-slate-700 font-bold text-xs py-2 px-4 rounded-xl hover:bg-slate-200 transition-all cursor-pointer"
+                      className="bg-slate-105 border border-slate-300 text-slate-705 font-bold text-xs py-2 px-4 rounded-xl hover:bg-slate-200 transition-all cursor-pointer"
                     >
                       {state.language === 'ar' ? 'السابق' : 'Précédent'}
                     </button>
@@ -1110,7 +1666,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterERP }) => {
 
                   <button
                     onClick={handleNextStep}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs py-2.5 px-6 rounded-xl transition-all shadow-md shadow-indigo-600/10 cursor-pointer"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-black text-xs py-2.5 px-6 rounded-xl transition-all shadow-md shadow-blue-600/10 cursor-pointer"
                   >
                     {onboardingStep === 3 ? l.btnActivate : (onboardingStep === 4 ? l.btnLaunch : (state.language === 'ar' ? 'المتابعة' : 'Continuer'))}
                   </button>

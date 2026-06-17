@@ -205,10 +205,9 @@ export const ProductionPage: React.FC = () => {
 
                         {state.rawMaterials.map(rm => {
                           const isActive = p.activeMaterials ? p.activeMaterials[rm.id] !== false : true;
-                          const consumedRatio = p.consumedMaterials[rm.id] || 0;
-                          const calculatedConsumedQty = consumedRatio * p.productionVolume;
+                          const consumedQty = p.consumedMaterials[rm.id] || 0;
                           const matCmup = calculatedValues.rawMaterialCumps[rm.id] || 0;
-                          const costAmount = isActive ? (calculatedConsumedQty * matCmup) : 0;
+                          const costAmount = isActive ? (consumedQty * matCmup) : 0;
 
                           return (
                             <tr key={rm.id} className={`transition-all ${isActive ? 'hover:bg-slate-900/10' : 'opacity-45 bg-slate-950/40 grayscale'}`}>
@@ -230,25 +229,23 @@ export const ProductionPage: React.FC = () => {
                                     )}
                                   </button>
                                   <span className={`font-semibold ${isActive ? 'text-slate-200' : 'text-slate-500 line-through'}`}>
-                                    {rm.name} <span className="text-[10px] text-slate-500">({rm.unit} {state.language === 'ar' ? 'لكل وحدة منتج' : 'per unit'})</span>
+                                    {rm.name} <span className="text-[10px] text-slate-500">({rm.unit})</span>
                                   </span>
                                 </div>
                               </td>
                               <td className="p-1">
                                 {isActive ? (
                                   <div className="flex items-center justify-center gap-1">
-                                    {/* User inputs the allocation ratio per finished good item */}
                                     <input 
                                       type="number"
-                                      value={consumedRatio}
+                                      value={consumedQty}
                                       onChange={e => {
                                         const updatedRatio = { ...p.consumedMaterials };
                                         updatedRatio[rm.id] = parseFloat(e.target.value) || 0;
                                         updateProduct(p.id, { consumedMaterials: updatedRatio });
                                       }}
-                                      className="w-16 text-center bg-slate-950 border border-slate-800 rounded p-1 text-slate-100 font-bold focus:outline-none"
+                                      className="w-24 text-center bg-slate-950 border border-slate-800 rounded p-1 text-slate-100 font-bold focus:outline-none"
                                     />
-                                    <span className="text-[10px] text-slate-500">→ {Math.round(calculatedConsumedQty).toLocaleString()}</span>
                                   </div>
                                 ) : (
                                   <span className="text-slate-600">-</span>

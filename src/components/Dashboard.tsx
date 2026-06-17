@@ -144,7 +144,10 @@ export const Dashboard: React.FC = () => {
               <span>{state.language === 'ar' ? '+14.2% مقارنة بالمستهدف' : '+14.2% vs target'}</span>
             </p>
           </div>
-          <div className="w-11 h-11 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center rounded-2xl">
+          <div 
+            style={{ marginRight: '2px', marginTop: '100px' }}
+            className="w-11 h-11 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center rounded-2xl pl-0 ml-0 pt-0 pb-0"
+          >
             <ShoppingCart className="w-5.5 h-5.5" />
           </div>
         </motion.div>
@@ -166,7 +169,10 @@ export const Dashboard: React.FC = () => {
               <span>{Math.round(sum.totalSales > 0 ? (sum.totalCostPrice / sum.totalSales) * 100 : 0)}% {state.language === 'ar' ? 'من رقم الأعمال' : 'of sales turnover'}</span>
             </p>
           </div>
-          <div className="w-11 h-11 bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center rounded-2xl">
+          <div 
+            style={{ marginTop: '100px', marginBottom: '0px', marginRight: '0px' }}
+            className="w-11 h-11 bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center rounded-2xl"
+          >
             <Layers className="w-5.5 h-5.5" />
           </div>
         </motion.div>
@@ -188,7 +194,10 @@ export const Dashboard: React.FC = () => {
               <span>{state.language === 'ar' ? 'العائد الصافي لكل مبيعة' : 'Net return on sales'}</span>
             </p>
           </div>
-          <div className="w-11 h-11 bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center rounded-2xl">
+          <div 
+            style={{ marginRight: '14px', marginTop: '100px', marginLeft: '-17px' }}
+            className="w-11 h-11 bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center rounded-2xl pb-0"
+          >
             <Percent className="w-5.5 h-5.5" />
           </div>
         </motion.div>

@@ -545,12 +545,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const isActive = p.activeMaterials ? p.activeMaterials[matId] !== false : true;
         if (isActive) {
           const cmup = rawMaterialCumps[matId] || 0;
-          // The qty can represent either unit consumption or period total.
-          // If the user inputs a small unit consumption (e.g. 0.1 m³ or 2.5kg per product)
-          // the total consumed is qty * productionVolume! Let's follow standard math logic:
-          // is qty a unit consumption? Yes! If qty is small (e.g. < 50), let's assume it is unit consumption, and total consumed = qty * productionVolume.
-          // Let's multiply by productionVolume to get standard period cost!
-          const totalMatQty = Number(qty) * p.productionVolume;
+          // The qty represents the total consumed quantity from stock directly.
+          // The Amount = consumed quantity × unit cost (CMUP)
+          const totalMatQty = Number(qty);
           rawMaterialCost += totalMatQty * cmup;
         }
       });

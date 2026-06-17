@@ -36,9 +36,9 @@ export function ExportBar() {
   // Configuration parameters for the dynamic PDF structure
   const [showConfig, setShowConfig] = useState(false);
   const [companyName, setCompanyName] = useState(
-    state.language === 'ar' ? "مؤسسة النجاح الصناعية (FyCompta)" : 
-    state.language === 'fr' ? "Entreprise Succès Industriel (FyCompta)" : 
-    "Succes Industrial Enterprise (FyCompta)"
+    state.language === 'ar' ? "مؤسسة النجاح الصناعية" : 
+    state.language === 'fr' ? "Entreprise Succès Industriel" : 
+    "Succes Industrial Enterprise"
   );
   const [financialPeriod, setFinancialPeriod] = useState(
     state.language === 'ar' ? "الربع الأول من عام 2026" : 
@@ -54,6 +54,7 @@ export function ExportBar() {
 
   const lang = state.language;
   const isRtl = lang === 'ar';
+  const cleanCompanyName = (companyName || '').replace(/\s*\(?FyCompta\)?\s*/gi, '').trim();
 
   const modalTranslations = {
     ar: {
@@ -445,7 +446,7 @@ export function ExportBar() {
     </div>
     <table class="metadata-section">
         <tr>
-            <td style="width: 50%;"><strong>اسم المؤسسة:</strong> ${companyName || '-'}</td>
+            <td style="width: 50%;"><strong>اسم المؤسسة:</strong> ${cleanCompanyName || '-'}</td>
             <td style="width: 50%;"><strong>الفترة المالية:</strong> ${financialPeriod || '-'}</td>
         </tr>
         <tr>
@@ -510,11 +511,11 @@ export function ExportBar() {
             </tr>
         </tbody>
     </table>
-    <h2>ثانياً: ملخص وضعية المؤسسة (التحليل الذكي المدعوم بـ SSC)</h2>
+    <h2>ثانياً: ملخص وضعية المؤسسة</h2>
     ${aiBoxContent}
     <h2>ثالثاً: توصيات وخطط مستقبلية استراتيجية</h2>
     <div class="recommendation-box">
-        <span class="recommendation-title">📋 الإجراءات والخطط التصحيحية المقترحة من قِبل نظام SSC:</span>
+        <span class="recommendation-title">📋 الإجراءات والخطط التصحيحية المقترحة من قِبل نظام FyCompta:</span>
         <ul>
             <li><strong>إعادة هندسة أسعار التكلفة:</strong> ضرورة العمل على تطبيق منهجية التكلفة المستهدفة (Target Costing) لربط عمليات التصميم والتصنيع بمتطلبات السوق مباشرة.</li>
             <li><strong>معالجة انحرافات المواد والهدر:</strong> تكثيف الرقابة على خطوط الإنتاج، وتدريب العمالة لتقليل نسب التالف والضياع في المواد الأولية.</li>
@@ -523,7 +524,7 @@ export function ExportBar() {
         </ul>
     </div>
     <div class="page-footer-custom">
-        <span>نظام التقييم الاستراتيجي للتكاليف | SSC</span>
+        <span>نظام إدارة ومراقبة التكاليف - FyCompta</span>
         <span>صفحة 1 من 1</span>
     </div>
 </body>
@@ -587,7 +588,7 @@ export function ExportBar() {
     </div>
     <table class="metadata-section">
         <tr>
-            <td style="width: 50%;"><strong>Nom de l'Entreprise:</strong> ${companyName || '-'}</td>
+            <td style="width: 50%;"><strong>Nom de l'Entreprise:</strong> ${cleanCompanyName || '-'}</td>
             <td style="width: 50%;"><strong>Période Financière:</strong> ${financialPeriod || '-'}</td>
         </tr>
         <tr>
@@ -652,20 +653,20 @@ export function ExportBar() {
             </tr>
         </tbody>
     </table>
-    <h2>II. Résumé de la Situation de l'Entreprise (Analyse IA par SSC)</h2>
+    <h2>II. Résumé de la Situation de l'Entreprise</h2>
     ${aiBoxContent}
     <h2>III. Recommandations et Plans Futurs Stratégiques</h2>
     <div class="recommendation-box">
-        <span class="recommendation-title">📋 Actions Correctives et Plans Proposés par le Système SSC:</span>
+        <span class="recommendation-title">📋 Actions Correctives et Plans Proposés par le Système FyCompta:</span>
         <ul>
-            <li><strong>Réingénierie du Coût de Revient:</strong> Déployer la méthodologie du Coût Cible (Target Costing) pour aligner directement les processus de conception et de fabrication sur les exigences du marché.</li>
+            <li><strong>Réingénierie du Coût de Revient:</strong> Déployer la méthodologie du Coût Cible (Target Costing) pour alginer directement les processus de conception et de fabrication sur les exigences du marché.</li>
             <li><strong>Traitement des Écarts de Matières:</strong> Renforcer le contrôle sur les lignes de production et former le personnel pour réduire les taux de rebuts et de déchets de matières premières.</li>
             <li><strong>Optimisation de la Politique d'Achat:</strong> Renégocier les contrats d'approvisionnement pour obtenir des remises sur volume, abaissant ainsi le coût d'achat unitaire des matières.</li>
             <li><strong>Optimisation du Mix de Vente:</strong> Concentrer les efforts stratégiques sur les produits à forte marge analytique, tout en réévaluant les prix ou le maintien des lignes de produits non rentables.</li>
         </ul>
     </div>
     <div class="page-footer-custom">
-        <span>Système d'Évaluation Stratégique des Coûts | SSC</span>
+        <span>Système de gestion et de contrôle des coûts - FyCompta</span>
         <span>Page 1 de 1</span>
     </div>
 </body>
@@ -729,7 +730,7 @@ export function ExportBar() {
     </div>
     <table class="metadata-section">
         <tr>
-            <td style="width: 50%;"><strong>Company Name:</strong> ${companyName || '-'}</td>
+            <td style="width: 50%;"><strong>Company Name:</strong> ${cleanCompanyName || '-'}</td>
             <td style="width: 50%;"><strong>Financial Period:</strong> ${financialPeriod || '-'}</td>
         </tr>
         <tr>
@@ -794,17 +795,21 @@ export function ExportBar() {
             </tr>
         </tbody>
     </table>
-    <h2>II. Company Status Summary (AI-Driven Analysis by SSC)</h2>
+    <h2>II. Company Status Summary</h2>
     ${aiBoxContent}
     <h2>III. Strategic Recommendations and Future Plans</h2>
     <div class="recommendation-box">
-        <span class="recommendation-title">📋 Corrective Actions and Plans Proposed by the SSC System:</span>
+        <span class="recommendation-title">📋 Corrective Actions and Plans Proposed by the FyCompta System:</span>
         <ul>
             <li><strong>Cost Price Re-engineering:</strong> Implement Target Costing methodology to align design and manufacturing processes directly with market requirements.</li>
             <li><strong>Addressing Material Variances and Waste:</strong> Intensify shop-floor control and provide targeted training to reduce defect and scrap rates in raw materials.</li>
             <li><strong>Developing Logistics and Procurement Policies:</strong> Renegotiate supply contracts to secure volume discounts, lowering the unit purchase cost of materials.</li>
             <li><strong>Optimizing Sales Mix:</strong> Shift strategic focus toward products with higher analytical margins, while reviewing the pricing or continuation of low-performing or unprofitable product lines.</li>
         </ul>
+    </div>
+    <div class="page-footer-custom">
+        <span>Cost Management & Control System - FyCompta</span>
+        <span>Page 1 of 1</span>
     </div>
 </body>
 </html>`;
@@ -947,7 +952,7 @@ export function ExportBar() {
         const report_digital_fingerprint = "ANACPT-AI-" + Math.random().toString(36).substring(2, 10).toUpperCase();
 
         const templateData: ExecutiveTemplateData = {
-          company_name: companyName || (lang === 'ar' ? 'مؤسسة النجاح الصناعية' : lang === 'fr' ? 'Etablissement de Production' : 'Industrial Enterprise'),
+          company_name: cleanCompanyName || (lang === 'ar' ? 'مؤسسة النجاح الصناعية' : lang === 'fr' ? 'Etablissement de Production' : 'Industrial Enterprise'),
           report_id: reportIdHex,
           financial_period: financialPeriod || (lang === 'ar' ? 'الدورة المالية الحالية' : lang === 'fr' ? 'Exercice En Cours' : 'Current Fiscal Period'),
           issue_date: issueDateStr,

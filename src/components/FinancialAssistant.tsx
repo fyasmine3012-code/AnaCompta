@@ -57,72 +57,87 @@ export const FinancialAssistant: React.FC = () => {
     try {
       // Craft compact ERP data context to send to n8n
       const contextSummary = {
-        language: state.language,
-        totalSales: calculatedValues.corporateSummary.totalSales,
-        totalCostPrice: calculatedValues.corporateSummary.totalCostPrice,
-        netCorporateProfit: calculatedValues.corporateSummary.netCorporateProfit,
-        workshopsCount: state.workshops.length,
-        itemsCount: state.rawMaterials.length,
-        productsCount: state.products.length,
-        products: state.products.map(p => {
-          const results = calculatedValues.netResults[p.id] || {};
+        language: state.language || 'ar',
+        totalSales: calculatedValues?.corporateSummary?.totalSales || 0,
+        totalCostPrice: calculatedValues?.corporateSummary?.totalCostPrice || 0,
+        netCorporateProfit: calculatedValues?.corporateSummary?.netCorporateProfit || 0,
+        workshopsCount: state.workshops?.length || 0,
+        itemsCount: state.rawMaterials?.length || 0,
+        productsCount: state.products?.length || 0,
+        products: (state.products || []).map(p => {
+          const results = calculatedValues?.netResults?.[p.id] || {};
           return {
-            name: p.name,
-            quantitySold: p.quantitySold,
-            sellingPrice: p.sellingPrice,
-            totalCostOfSales: results.costOfSales,
-            totalCostOfDistribution: results.distributionCost,
-            totalCostPrice: results.totalCostPrice,
-            totalRevenue: results.revenue,
-            netAnalyticMarge: results.analyticMarge,
-            standardUnitCost: p.standardUnitCost,
+            name: p.name || "",
+            quantitySold: p.quantitySold || 0,
+            sellingPrice: p.sellingPrice || 0,
+            totalCostOfSales: results.costOfSales || 0,
+            totalCostOfDistribution: results.distributionCost || 0,
+            totalCostPrice: results.totalCostPrice || 0,
+            totalRevenue: results.revenue || 0,
+            netAnalyticMarge: results.analyticMarge || 0,
+            standardUnitCost: p.standardUnitCost || 0,
             wastePercentage: p.wastePercentage || 0
           };
         }),
-        workshops: state.workshops.map(w => ({
-          name: w.name,
-          type: w.type,
-          natureUO: w.natureUO,
-          nombreUO: w.nombreUO,
-          secondarySum: calculatedValues.trciTotals.secondarySums[w.id] || 0,
-          unitCostOfWorkUnit: calculatedValues.trciTotals.unitCosts[w.id] || 0
+        workshops: (state.workshops || []).map(w => ({
+          name: w.name || "",
+          type: w.type || "",
+          natureUO: w.natureUO || "",
+          nombreUO: w.nombreUO || 0,
+          secondarySum: calculatedValues?.trciTotals?.secondarySums?.[w.id] || 0,
+          unitCostOfWorkUnit: calculatedValues?.trciTotals?.unitCosts?.[w.id] || 0
         }))
       };
 
-      // 2. توجيه الطلب مباشرة إلى خادم n8n الخاص بكِ
-      // استبدلي الرابط بالأسفل برابط Production Webhook الحقيقي من n8n
-      const n8nWebhookUrl = 'https://your-n8n-instance.com/webhook/your-endpoint-id';
-
-      const response = await fetch(n8nWebhookUrl, {
+      // 2. توجيه الطلب مباشرةً إلى الخادم المحلي المتصل بـ Gemini API
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: messageText,
-          sessionId: sessionId, // إرسال المعرّف لعقدة الذاكرة
-          history: messages.slice(-10), 
+          history: (messages || []).slice(-10).map(m => ({
+            role: m?.sender === 'user' ? 'user' : 'model',
+            parts: [{ text: m?.text || "" }]
+          })),
           context: contextSummary
         })
       });
 
-      const data = await response.json();
-      
-      // 3. استقبال الرد الراجع من الـ AI Agent في n8n وعرضه للمستخدم
-      // n8n يرجع النتيجة عادةً في حقل يسمى output أو text بناءً على استجابة الـ Agent
-      const aiResponseText = data.output || data.text || data.response;
+      let data: any = null;
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        try {
+          data = await response.json();
+        } catch (jsonErr) {
+          console.error("Failed to parse JSON response:", jsonErr);
+        }
+      }
 
-      if (response.ok && aiResponseText) {
-        setMessages(prev => [...prev, { sender: 'assistant', text: aiResponseText }]);
+      // 3. استقبال الرد الراجع من Gemini API وعرضه للمستخدم
+      if (response.ok && data && data.text) {
+        setMessages(prev => [...prev, { sender: 'assistant', text: data.text }]);
       } else {
-        const fallbackMsg = state.language === 'ar'
-          ? "عذراً! واجهت مشكلة في معالجة البيانات عبر خادم n8n. يرجى مراجعة الـ Workflow."
-          : "Oops! The n8n workflow encountered an issue processing this request.";
-        throw new Error(fallbackMsg);
+        let errorMessage = "";
+        if (response.status === 404) {
+          errorMessage = state.language === 'ar'
+            ? "عذراً! يبدو أن خادم الخلفية غير متاح حالياً أو أن واجهة برمجة التطبيقات (API/chat) غير معرّفة (خطأ 404). يرجى التحقق من تشغيل الخادم والمسارات المتوفرة."
+            : "Sorry! The backend service appears to be unavailable, or the API endpoint was not found (404 Error). Please verify the server is running.";
+        } else if (response.status === 504 || response.status === 502) {
+          errorMessage = state.language === 'ar'
+            ? "انتهت مهلة المساعد المحاسبي الذكي أثناء معالجة البيانات (خطأ في بوابة الخادم). يرجى المحاولة مرة أخرى لاحقاً."
+            : "The financial assistant request timed out or received an invalid gateway response. Please try again later.";
+        } else {
+          errorMessage = data?.friendlyMessage || data?.error || (state.language === 'ar'
+            ? `واجه خادم الذكاء الاصطناعي مشكلة أثناء معالجة الاستفسار (رمز الحالة: ${response.status}).`
+            : `The AI server encountered an issue processing your query (Status code: ${response.status}).`);
+        }
+        throw new Error(errorMessage);
       }
     } catch (e: any) {
       console.error("AI assistant message fetch exception:", e);
-      const errorFriendlyMessage = state.language === 'ar'
-        ? "عذراً، فشل الاتصال بالمساعد الذكي للأنظمة المحاسبية (n8n). يرجى التأكد من تشغيل الـ Workflow ونشر الموقع."
-        : "Connection to the n8n financial assistant workflow failed. Please verify your endpoints.";
+      const errorFriendlyMessage = e.message || (state.language === 'ar'
+        ? "عذراً، فشل الاتصال بالمساعد الذكي للأنظمة المحاسبية. يرجى التأكد من إدخال مفتاح Gemini API وتحديث الصفحة."
+        : "Connection to the financial assistant failed. Please ensure your Gemini API key is configured.");
       setMessages(prev => [...prev, { sender: 'assistant', text: errorFriendlyMessage }]);
     } finally {
       setIsLoading(false);
@@ -203,7 +218,7 @@ export const FinancialAssistant: React.FC = () => {
 
             {/* Chat message streams scroll area */}
             <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-950/20 scrollbar-none">
-              {messages.map((m, index) => (
+              {(Array.isArray(messages) ? messages : []).map((m, index) => (
                 <div 
                   key={index} 
                   className={`flex items-start gap-2.5 max-w-[85%] ${
@@ -247,7 +262,7 @@ export const FinancialAssistant: React.FC = () => {
               <div className="p-3 bg-slate-950/40 border-t border-slate-900 space-y-2.5">
                 <span className="text-[9.5px] text-slate-500 font-bold block">{state.language === 'ar' ? 'أسئلة مقترحة سريعة:' : 'Quick analytical starting prompts:'}</span>
                 <div className="flex flex-col gap-1.5">
-                  {samplePrompts.map((p, i) => (
+                  {(Array.isArray(samplePrompts) ? samplePrompts : []).map((p, i) => (
                     <button
                       key={i}
                       onClick={() => handleSendMessage(p.query)}

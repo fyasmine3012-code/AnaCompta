@@ -12,6 +12,9 @@ import { FinancialAssistant } from './components/FinancialAssistant';
 import { LandingPage } from './components/LandingPage';
 import { HistoricalAIAnalysis } from './components/HistoricalAIAnalysis';
 import { ExportBar } from './components/ExportBar';
+import { FyComptaLogo } from './components/FyComptaLogo';
+import { SmartNotifications } from './components/SmartNotifications';
+import { AIForecastingPage } from './components/AIForecastingPage';
 import { 
   Layers, 
   BookOpen, 
@@ -30,7 +33,8 @@ import {
   Sun,
   Moon,
   AlertCircle,
-  BrainCircuit
+  BrainCircuit,
+  TrendingUp
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -70,6 +74,7 @@ function AppContent() {
     { id: 'costPrice', label: t.costPrice, icon: Calculator },
     { id: 'synthesis', label: t.synthesis, icon: Layers },
     { id: 'historical', label: state.language === 'en' ? 'Historical & AI' : (state.language === 'fr' ? 'Historique & IA' : 'البيانات التاريخية والذكاء الاصطناعي'), icon: BrainCircuit },
+    { id: 'forecasting', label: state.language === 'en' ? 'Smart Forecasting & Scenario' : (state.language === 'fr' ? 'Prévisions & Scénarios' : 'التنبؤ الذكي والسيناريوهات'), icon: TrendingUp },
     { id: 'settings', label: t.settings, icon: Settings },
   ];
 
@@ -82,6 +87,7 @@ function AppContent() {
       case 'costPrice': return <CostPricePage />;
       case 'synthesis': return <GlobalSynthesis />;
       case 'historical': return <HistoricalAIAnalysis />;
+      case 'forecasting': return <AIForecastingPage />;
       case 'settings': return <ConfigPage />;
       default: return <Dashboard />;
     }
@@ -109,11 +115,11 @@ function AppContent() {
           </button>
 
           {/* ERP Brand Launcher symbol */}
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/10 cursor-pointer" onClick={() => setViewMode('landing')}>
-            <Layers className="text-white w-5 h-5" />
+          <div className="flex items-center justify-center cursor-pointer hover:opacity-90 active:scale-95 transition-all" onClick={() => setViewMode('landing')}>
+            <FyComptaLogo size={36} />
           </div>
           <div>
-            <h1 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-indigo-400 tracking-wider cursor-pointer" onClick={() => setViewMode('landing')}>
+            <h1 className="text-sm font-black tracking-wider cursor-pointer" style={{ color: '#dce2f1' }} onClick={() => setViewMode('landing')}>
               {t.appTitle.toUpperCase()}
             </h1>
             {/* Breadcrumb indicator */}
@@ -135,6 +141,9 @@ function AppContent() {
             <Home className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{state.language === 'ar' ? 'موقع لاندينج' : 'Site Web'}</span>
           </button>
+
+          {/* Smart Notification Bell & Panel */}
+          <SmartNotifications onTabChange={setActiveTab} />
 
           {/* Sun/Moon Theme Toggle */}
           <button
